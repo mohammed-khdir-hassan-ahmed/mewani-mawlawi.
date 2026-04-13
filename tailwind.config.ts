@@ -8,9 +8,6 @@ const config: Config = {
   future: {
     respectDefaultRingColorOpacity: true,
   },
-  experimental: {
-    optimizePackageImports: ['@chakra-ui/react'],
-  },
   theme: {
     extend: {
       fontFamily: {

@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/neon-http';
-import { http } from 'drizzle-orm/neon-http';
 import { menuitem } from './src/db/schema';
 
 const db = drizzle(process.env.DATABASE_URL!);
