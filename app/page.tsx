@@ -1,65 +1,66 @@
-import Image from "next/image";
+import { drizzle } from 'drizzle-orm/neon-http';
+import { neon } from '@neondatabase/serverless';
+import { menuitem } from '@/src/db/schema';
+import { Utensils, Pizza, Coffee, Salad, Egg } from 'lucide-react';
+import MenuGrid from '@/components/MenuGrid';
 
-export default function Home() {
+const sql = neon(process.env.DATABASE_URL!);
+const db = drizzle(sql);
+
+interface MenuItem {
+  id: number;
+  name: string;
+  price: number;
+  image_url: string;
+}
+
+async function MenuList() {
+  // Delay for 1 second to show loading page
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  const items: MenuItem[] = await db.select().from(menuitem);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <div className="mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-[#386641] text-center">میوانی مەولەوی</h1>
+        <p className="text-center text-gray-500 text-sm md:text-base mb-6">خێرا لە خزمەت  ، بێوەنە لەتام</p>
+        
+        {/* Categories */}
+        <div className="flex justify-center gap-1 md:gap-3 overflow-x-auto pb-2 px-1">
+          <button className="flex flex-col items-center gap-0.5 px-2 md:px-3 py-1.5 md:py-2 rounded-none bg-transparent hover:border-b-2 hover:border-[#386641] hover:text-[#386641] transition-all duration-200 text-gray-600 flex-shrink-0 border-b-2 border-transparent">
+            <Utensils className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="text-[11px] md:text-xs font-medium text-center whitespace-nowrap"> خواردنە سەرەکیەکان</span>
+          </button>
+          <button className="flex flex-col items-center gap-0.5 px-2 md:px-3 py-1.5 md:py-2 rounded-none bg-transparent hover:border-b-2 hover:border-[#386641] hover:text-[#386641] transition-all duration-200 text-gray-600 flex-shrink-0 border-b-2 border-transparent">
+            <Pizza className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="text-[11px] md:text-xs font-medium text-center whitespace-nowrap">برژاو</span>
+          </button>
+          <button className="flex flex-col items-center gap-0.5 px-2 md:px-3 py-1.5 md:py-2 rounded-none bg-transparent hover:border-b-2 hover:border-[#386641] hover:text-[#386641] transition-all duration-200 text-gray-600 flex-shrink-0 border-b-2 border-transparent">
+            <Coffee className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="text-[11px] md:text-xs font-medium text-center whitespace-nowrap">خواردنەوە</span>
+          </button>
+          <button className="flex flex-col items-center gap-0.5 px-2 md:px-3 py-1.5 md:py-2 rounded-none bg-transparent hover:border-b-2 hover:border-[#386641] hover:text-[#386641] transition-all duration-200 text-gray-600 flex-shrink-0 border-b-2 border-transparent">
+            <Salad className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="text-[11px] md:text-xs font-medium text-center whitespace-nowrap">مقەبیلات</span>
+          </button>
+          <button className="flex flex-col items-center gap-0.5 px-2 md:px-3 py-1.5 md:py-2 rounded-none bg-transparent hover:border-b-2 hover:border-[#386641] hover:text-[#386641] transition-all duration-200 text-gray-600 flex-shrink-0 border-b-2 border-transparent">
+            <Egg className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="text-[11px] md:text-xs font-medium text-center whitespace-nowrap">بەیانیان</span>
+          </button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+    <MenuGrid items={items} />
+    </>
+  );
+}
+
+export default async function Home() {
+  return (
+    <>
+      <div className="p-3 md:p-8 pt-0">
+        <MenuList />
+      </div>
+    </>
   );
 }
