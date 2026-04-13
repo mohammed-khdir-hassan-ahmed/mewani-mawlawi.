@@ -89,12 +89,12 @@ export default function MenuGrid({ items }: MenuGridProps) {
       {/* Modal Dialog */}
       {selectedItem && (
         <Dialog open={true} onOpenChange={() => setSelectedItem(null)}>
-          <DialogContent>
+          <DialogContent className="max-h-[95vh] overflow-y-auto">
             <div className="rounded-lg overflow-hidden mb-2">
               <img
                 src={selectedItem.image_url}
                 alt={selectedItem.name}
-                className="w-full h-32 sm:h-48 md:h-64 object-cover"
+                className="w-full h-48 sm:h-80 md:h-96 object-cover"
               />
             </div>
             <DialogHeader>
