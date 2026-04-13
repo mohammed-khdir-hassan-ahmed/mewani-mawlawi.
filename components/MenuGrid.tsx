@@ -44,8 +44,14 @@ export default function MenuGrid({ items }: MenuGridProps) {
           key={item.id}
           role="button"
           tabIndex={0}
-          onClick={handleOpen}
-          onTouchEnd={handleOpen}
+          onClick={(e) => {
+            e.preventDefault();
+            handleOpen();
+          }}
+          onTouchEnd={(e) => {
+            e.preventDefault();
+            handleOpen();
+          }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               handleOpen();
@@ -81,41 +87,36 @@ export default function MenuGrid({ items }: MenuGridProps) {
       })}
 
       {/* Modal Dialog */}
-      <Dialog open={!!selectedItem} onOpenChange={() => setSelectedItem(null)}>
-        <DialogContent className="max-w-sm w-full max-h-[90vh] overflow-y-auto mx-auto p-4 md:p-6 z-50 fixed">
-         
-          
-          {selectedItem && (
-            <>
-              <div className="rounded-lg overflow-hidden mb-4">
-                <img
-                  src={selectedItem.image_url}
-                  alt={selectedItem.name}
-                  className="w-full h-48 md:h-64 object-cover"
-                />
-              </div>
- <DialogHeader>
-            <div>
-              <DialogTitle className="text-lg md:text-xl font-bold">{selectedItem?.name}</DialogTitle>
-              <div className="text-sm md:text-base font-bold text-gray-600 mt-1">
-                {selectedItem && `${formatPrice(selectedItem.price)} هەزار`}
-              </div>
+      {selectedItem && (
+        <Dialog open={true} onOpenChange={() => setSelectedItem(null)}>
+          <DialogContent>
+            <div className="rounded-lg overflow-hidden mb-2">
+              <img
+                src={selectedItem.image_url}
+                alt={selectedItem.name}
+                className="w-full h-32 sm:h-48 md:h-64 object-cover"
+              />
             </div>
-          </DialogHeader>
-              <div className="flex gap-3 flex-col md:flex-row">
-             
-                <Button 
-                  variant="outline" 
-                  className="flex-1 bg-[#386641] text-white hover:text-white hover:bg-[#2a4d30] rounded-md"
-                  onClick={() => setSelectedItem(null)}
-                >
-                  داخستن
-                </Button>
+            <DialogHeader>
+              <div className="flex flex-row items-center justify-between gap-2">
+                <DialogTitle className="text-base md:text-xl font-bold flex-1">{selectedItem.name}</DialogTitle>
+                <div className="text-xs md:text-base font-bold text-gray-600 whitespace-nowrap">
+                  {`${formatPrice(selectedItem.price)} هەزار`}
+                </div>
               </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+            </DialogHeader>
+            <div className="flex gap-2 flex-col md:gap-3 md:flex-row">
+              <Button 
+                variant="outline" 
+                className="flex-1 text-sm md:text-base bg-[#386641] text-white hover:text-white hover:bg-[#2a4d30] rounded-md p-1"
+                onClick={() => setSelectedItem(null)}
+              >
+                داخستن
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
