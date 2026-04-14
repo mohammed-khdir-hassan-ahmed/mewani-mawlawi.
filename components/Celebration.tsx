@@ -15,14 +15,16 @@ interface Confetti {
 }
 
 export default function Celebration() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [confetti, setConfetti] = useState<Confetti[]>([]);
-  const [mounted, setMounted] = useState(false);
+  const [windowHeight, setWindowHeight] = useState(0);
 
   const colors = ['#386641', '#FFD700', '#FF6B6B', '#4ECDC4', '#95E1D3', '#FF1493', '#32CD32', '#FF69B4', '#87CEEB', '#FFB6C1'];
 
   useEffect(() => {
-    setMounted(true);
+    // Set window height only on client
+    setWindowHeight(window.innerHeight);
+    setIsVisible(true);
 
     // Generate confetti pieces
     const newConfetti: Confetti[] = [];
@@ -48,11 +50,7 @@ export default function Celebration() {
     return () => clearTimeout(timer);
   }, []);
 
-  if (!isVisible) {
-    return null;
-  }
-
-  if (!mounted) {
+  if (!isVisible || windowHeight === 0 || confetti.length === 0) {
     return null;
   }
 
@@ -73,7 +71,7 @@ export default function Celebration() {
           }}
           initial={{ y: 0, rotate: piece.rotation, opacity: 1, scale: 0 }}
           animate={{
-            y: window.innerHeight + 20,
+            y: windowHeight + 20,
             rotate: piece.rotation + 720,
             x: piece.drift,
             opacity: [0, 1, 1, 0],

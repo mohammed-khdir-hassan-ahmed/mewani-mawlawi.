@@ -17,7 +17,7 @@ interface MenuItem {
 
 async function MenuList() {
 
-  await new Promise(resolve => setTimeout(resolve, 5000));
+  await new Promise(resolve => setTimeout(resolve, 1000));
   
   const items: MenuItem[] = await db.select().from(menuitem);
 

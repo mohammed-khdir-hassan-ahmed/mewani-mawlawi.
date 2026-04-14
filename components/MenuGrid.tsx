@@ -80,6 +80,7 @@ export default function MenuGrid({ items }: MenuGridProps) {
               alt={item.name}
               width={300}
               height={200}
+              loading="lazy"
               className="w-full h-full object-cover"
             />
           </div>
@@ -87,7 +88,7 @@ export default function MenuGrid({ items }: MenuGridProps) {
             <div className="flex items-start gap-3">
               <div className="flex flex-col justify-center flex-1 min-w-0">
                 <div className='font-bold text-sm md:text-base line-clamp-2'>{item.name}</div>
-                <div className='text-xs font-bold text-gray-600'>{formatPrice(item.price)} هەزار</div>
+                <div className='text-xs font-bold text-gray-600'>{formatPrice(item.price)} دینار</div>
               </div>
               <Button 
                 className="bg-[#386641] hover:bg-[#2a4d30] text-white shrink-0 rounded-md"
@@ -118,6 +119,7 @@ export default function MenuGrid({ items }: MenuGridProps) {
                 alt={selectedItem.name}
                 width={500}
                 height={400}
+                priority
                 className="w-full h-80 md:h-96 object-cover"
               />
             </div>
@@ -128,7 +130,7 @@ export default function MenuGrid({ items }: MenuGridProps) {
                 {selectedItem.name}
               </h2>
               <p className="text-2xl md:text-3xl font-bold text-[#386641] whitespace-nowrap">
-                {formatPrice(selectedItem.price * quantity)} هەزار
+                {formatPrice(selectedItem.price * quantity)} دینار  
               </p>
             </div>
 

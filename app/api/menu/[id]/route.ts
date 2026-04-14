@@ -15,7 +15,7 @@ export async function PUT(
     const { id: paramId } = await params;
     const id = parseInt(paramId);
     const body = await request.json();
-    const { name, price, image_url } = body;
+    const { name, price, image_url, category } = body;
 
     // Validate input
     if (!name || !price) {
@@ -39,6 +39,7 @@ export async function PUT(
         name,
         price: parseInt(price),
         image_url: image_url || currentItem[0].image_url, // Use new image or keep old one
+        category: category || currentItem[0].category, // Use new category or keep old one
       })
       .where(eq(menuitem.id, id))
       .returning();

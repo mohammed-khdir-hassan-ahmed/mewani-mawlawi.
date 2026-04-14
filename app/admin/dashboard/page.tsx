@@ -458,7 +458,7 @@ export default function DashboardPage() {
                       />
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-gray-900 truncate">{item.name}</p>
-                        <p className="text-sm text-[#386641] font-semibold">{item.price} هەزار</p>
+                        <p className="text-sm text-[#386641] font-semibold">{item.price} دینار</p>
                         {item.category && (
                           <p className="text-xs text-gray-600">قۆناغ: {item.category}</p>
                         )}

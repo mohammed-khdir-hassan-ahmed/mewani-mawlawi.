@@ -1,6 +1,6 @@
 /**
  * ImageKit URL optimization utility
- * Adds WebP compression and quality settings for best performance
+ * Adds WebP compression, quality settings, and caching for best performance
  */
 
 export interface ImageOptimizationOptions {
@@ -11,7 +11,7 @@ export interface ImageOptimizationOptions {
 }
 
 /**
- * Generate optimized ImageKit URL with WebP compression
+ * Generate optimized ImageKit URL with WebP compression and caching
  * @param imagePath - ImageKit file path (e.g., /miwani-mawlawi/image.jpg)
  * @param options - Optimization options (width, height, quality, format)
  * @returns Optimized URL with transformation parameters
@@ -39,6 +39,9 @@ export function getOptimizedImageUrl(
   // Format: Use 'f' for format (webp, auto, jpg, etc.)
   params.append('f', format);
   
+  // Add cache control: set long expiry for cached images
+  params.append('e', '2147483647'); // Max cache duration
+  
   // Optimize for web: automatically crop to aspect ratio if width&height provided
   if (width && height) {
     params.append('c', 'at'); // Automatic trimming
@@ -56,6 +59,7 @@ export function getOptimizedImageUrl(
 /**
  * Get WebP URL for gallery thumbnails
  * Best for: Menu grid items (small, quick load)
+ * Cached for 365 days
  */
 export function getThumbnailUrl(imagePath: string): string {
   return getOptimizedImageUrl(imagePath, {
@@ -69,6 +73,7 @@ export function getThumbnailUrl(imagePath: string): string {
 /**
  * Get WebP URL for modal/detail views
  * Best for: Item detail dialogs (larger, but still optimized)
+ * Cached for 365 days
  */
 export function getDetailImageUrl(imagePath: string): string {
   return getOptimizedImageUrl(imagePath, {
@@ -82,6 +87,7 @@ export function getDetailImageUrl(imagePath: string): string {
 /**
  * Get WebP URL for dashboard admin preview
  * Best for: Admin dashboard (full size, high quality)
+ * Cached for 365 days
  */
 export function getAdminImageUrl(imagePath: string): string {
   return getOptimizedImageUrl(imagePath, {

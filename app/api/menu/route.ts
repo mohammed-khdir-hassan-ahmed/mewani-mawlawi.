@@ -20,9 +20,9 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, price, image_url } = body;
+    const { name, price, image_url, category } = body;
 
-    console.log('📥 POST /api/menu received:', { name, price, image_url: image_url?.substring(0, 50) + '...' });
+    console.log('📥 POST /api/menu received:', { name, price, image_url: image_url?.substring(0, 50) + '...', category });
 
     // Validate input
     if (!name || !price || !image_url) {
@@ -41,6 +41,7 @@ export async function POST(request: Request) {
         name,
         price: parseInt(price),
         image_url,
+        category: category || 'main',
       })
       .returning();
 
