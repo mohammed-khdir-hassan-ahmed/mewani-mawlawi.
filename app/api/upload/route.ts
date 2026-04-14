@@ -52,13 +52,9 @@ export async function POST(req: Request) {
       fileName: `miwani_${Date.now()}_${file.name}`,
       folder: '/miwani-mawlawi',
       useUniqueFileName: true,
-      // ImageKit compression options
-      // These tell ImageKit to optimize on upload
+      // ImageKit will optimize on upload automatically
       tags: ['menu', 'compressed'],
       isPrivateFile: false,
-      customMetadata: {
-        timestamp: new Date().toISOString(),
-      },
     });
 
     console.log('✅ Upload successful');
