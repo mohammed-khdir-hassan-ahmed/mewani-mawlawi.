@@ -46,7 +46,7 @@ export default function Navbar() {
 
           {/* Logo & Name */}
           <div className="flex flex-col items-center gap-2 mb-3">
-            <div className="relative h-4 w-4 md:h-6 md:w-6">
+            <div className="relative h-20 w-20 md:h-20 md:w-20">
               <Image
                 src="/image/logo.jpg"
                 alt="Logo"

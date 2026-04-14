@@ -101,7 +101,7 @@ export default function OptimizedMenuItem({
               {item.name}
             </div>
             <div className="text-xs font-bold text-gray-600 mt-1">
-              {formatPrice(item.price)} هەزار
+              {formatPrice(item.price)} دینار
             </div>
           </div>
           <Button

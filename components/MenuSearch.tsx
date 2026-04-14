@@ -46,7 +46,19 @@ export default function MenuSearch({ items }: MenuSearchProps) {
       {/* Categories and Search Section */}
       <div className="flex flex-col gap-3 items-center mb-4 px-1 md:px-0 w-full">
         {/* Categories */}
-        <div className="flex justify-center gap-1 md:gap-3 overflow-x-auto w-full md:pb-2">
+        <div 
+          className="flex gap-1 md:gap-3 overflow-x-auto overflow-y-hidden w-full md:justify-center md:pb-2 pb-2 px-2 md:px-0 scroll-smooth [-webkit-overflow-scrolling:touch]" 
+          style={{ 
+            scrollSnapType: 'x mandatory',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+        >
+          <style>{`
+            .categories-scroll::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
           {categories.map((category) => {
             const IconComponent = category.icon;
             const isSelected = selectedCategory === category.id;
@@ -59,6 +71,7 @@ export default function MenuSearch({ items }: MenuSearchProps) {
                     ? 'bg-transparent border-b-2 border-[#386641] text-[#386641]'
                     : 'bg-transparent hover:border-b-2 hover:border-[#386641] hover:text-[#386641] text-gray-600 border-b-2 border-transparent'
                 }`}
+                style={{ scrollSnapAlign: 'center' }}
               >
                 <IconComponent className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="text-[11px] md:text-xs font-medium text-center whitespace-nowrap">{category.name}</span>
