@@ -31,7 +31,7 @@ export default function Celebration() {
         // Bottom left cannon
         setTimeout(() => {
           confetti({
-            particleCount: 100,
+            particleCount: 200,
             spread: 80,
             origin: { x: 0.1, y: 1.1 },
             colors: ['#386641', '#FF6B6B', '#4ECDC4'],
@@ -44,7 +44,7 @@ export default function Celebration() {
         // Bottom right cannon
         setTimeout(() => {
           confetti({
-            particleCount: 100,
+            particleCount: 200,
             spread: 80,
             origin: { x: 0.9, y: 1.1 },
             colors: ['#FFD700', '#FF1493', '#95E1D3'],
@@ -57,12 +57,12 @@ export default function Celebration() {
         // Center burst - middle stage
         setTimeout(() => {
           confetti({
-            particleCount: 80,
+            particleCount: 200,
             spread: 90,
             origin: { x: 0.5, y: 0.5 },
             colors: ['#386641', '#FFD700', '#4ECDC4', '#FF1493'],
             gravity: 0.5,
-            scalar: 0.9,
+            scalar: 0.5,
             ticks: 280,
           });
         }, 450);

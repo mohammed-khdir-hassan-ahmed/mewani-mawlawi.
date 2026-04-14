@@ -40,12 +40,9 @@ async function MenuList() {
 
     return (
       <div className="mt-3">
-        <h1 className="text-2xl md:text-3xl font-bold text-[#386641] text-center">
+        <h1 className="text-2xl md:text-4xl font-bold text-[#386641] text-center mt-6 md:mt-0">
           میوانی مەولەوی
         </h1>
-        <p className="text-center text-gray-500 text-sm md:text-base mb-3 mt-2">
-          خێرا لە خزمەت  ، بێوەنە لەتام
-        </p>
         <MenuSearch items={items} />
       </div>
     );

@@ -44,7 +44,7 @@ export default function MenuSearch({ items }: MenuSearchProps) {
   return (
     <>
       {/* Categories and Search Section */}
-      <div className="flex flex-col gap-3 items-center mb-4 px-1 md:px-0 w-full">
+      <div className="flex flex-col gap-3 items-center mt-6 mb-4 px-1    md:px-0 w-full">
         {/* Categories */}
         <div 
           className="flex gap-1 md:gap-3 overflow-x-auto overflow-y-hidden w-full md:justify-center md:pb-2 pb-2 px-2 md:px-0 scroll-smooth [-webkit-overflow-scrolling:touch]" 
