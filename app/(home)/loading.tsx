@@ -17,15 +17,14 @@ export default function Loading() {
           <Image
             src="/image/logo.jpg"
             alt="Loading"
-            width={128}
-            height={128}
+            width={80}
+            height={80}
             priority
             className="w-full h-full object-contain"
           />
         </div>
 
-        {/* Restaurant name */}
-     
+       
       </div>
     </div>
   );

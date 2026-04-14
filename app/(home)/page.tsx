@@ -16,8 +16,16 @@ interface MenuItem {
   category?: string;
 }
 
+// Sleep function to delay loading
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function MenuList() {
   try {
+    // Add 1500 second delay
+    await sleep(1000);
+    
     // Fetch with Next.js cache
     // revalidate: 3600 means ISR - regenerate every hour
     const items: MenuItem[] = await db.select().from(menuitem);

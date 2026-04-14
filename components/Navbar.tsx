@@ -19,7 +19,7 @@ export default function Navbar() {
     <>
       <nav className="flex items-center justify-between px-4 md:px-12 py-1 md:py-0.5 border-b-2 border-gray-100 top-0 z-40 bg-white gap-6 sticky">
         {/* Left side - Logo */}
-        <div className="w-16 h-16 md:w-16 md:h-16 flex-shrink-0">
+        <div className="w-14 h-14 md:w-16 md:h-16 flex-shrink-0">
           <Image
             src="/image/logo.jpg"
             alt="Logo"
@@ -46,13 +46,12 @@ export default function Navbar() {
 
           {/* Logo & Name */}
           <div className="flex flex-col items-center gap-2 mb-3">
-            <div className="p-3 rounded-lg h-28 w-28">
+            <div className="relative h-4 w-4 md:h-6 md:w-6">
               <Image
                 src="/image/logo.jpg"
                 alt="Logo"
-                width={100}
-                height={100}
-                className="w-full h-full object-contain"
+                fill
+                className="object-contain"
               />
             </div>
           </div>
