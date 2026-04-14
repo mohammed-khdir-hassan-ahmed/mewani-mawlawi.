@@ -50,7 +50,13 @@ export default function DashboardPage() {
   };
 
   // Handle logout
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+    
     localStorage.removeItem('adminAuth');
     router.push('/login');
   };

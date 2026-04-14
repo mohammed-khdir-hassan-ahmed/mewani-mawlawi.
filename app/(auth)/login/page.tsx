@@ -18,16 +18,28 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
-    // Simple username/password check
-    const adminUsername = 'admin';
-    const adminPassword = 'admin123';
+    try {
+      // Send login request to server
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    if (username === adminUsername && password === adminPassword) {
-      // Set auth token in localStorage
-      localStorage.setItem('adminAuth', 'true');
-      router.push('/admin/dashboard');
-    } else {
-      setError('ناویی بەکارهێنەر یان تێپەڕە هەڵە یە');
+      const data = await response.json();
+
+      if (response.ok) {
+        // Set auth token in localStorage as backup for client-side checks
+        localStorage.setItem('adminAuth', 'true');
+        router.push('/admin/dashboard');
+      } else {
+        setError(data.message || 'ناویی بەکارهێنەر یان تێپەڕە هەڵە یە');
+      }
+    } catch (err) {
+      setError('خۆڵای سێرڤەر');
+      console.error('Login error:', err);
     }
     setLoading(false);
   };

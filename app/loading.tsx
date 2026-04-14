@@ -31,9 +31,7 @@ export default function Loading() {
             className="w-full h-full object-contain"
           />
         </div>
-        <p className="text-sm md:text-base text-gray-600 font-semibold animate-pulse">
-          جاری بارکردن...
-        </p>
+      
       </div>
       <style>{`
         @keyframes bounce {
