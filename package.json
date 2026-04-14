@@ -12,6 +12,7 @@
     "@imagekit/next": "^2.1.5",
     "@imagekit/react": "^5.0.2",
     "@neondatabase/serverless": "^1.0.2",
+    "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.4.2",

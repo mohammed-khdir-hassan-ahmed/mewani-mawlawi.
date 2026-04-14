@@ -65,10 +65,10 @@ export default function OptimizedMenuItem({
           onSelect(item);
         }
       }}
-      initial={{ opacity: 0, x: initialX, scale: 0.9 }}
-      whileInView={{ opacity: 1, x: 0, scale: 1 }}
+      initial={{ opacity: 0, scale: 0.8, rotateY: -20 }}
+      whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
       viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.6, ease: 'easeOut', delay: (index % 2) * 0.15 }}
+      transition={{ duration: 0.7, ease: 'easeOut', delay: (index % 4) * 0.1 }}
       className="overflow-hidden p-0 shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer rounded-lg bg-white flex flex-col h-full active:shadow-md"
     >
       {/* Image with Next.js Image component for optimization */}
