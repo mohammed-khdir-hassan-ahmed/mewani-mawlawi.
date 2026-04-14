@@ -42,7 +42,7 @@ export default function Navbar() {
       {/* Modal */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="w-[90vw] max-w-md md:max-w-lg max-h-[85vh] overflow-y-auto p-3 md:p-6">
-        
+          <DialogTitle className="sr-only">Restaurant Information</DialogTitle>
 
           {/* Content */}
           <div className="bg-white rounded-t-3xl p-3 space-y-3">
