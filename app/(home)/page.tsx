@@ -15,7 +15,7 @@ interface MenuItem {
 }
 
 async function MenuList() {
-  // Delay for 1 second to show loading page
+
   await new Promise(resolve => setTimeout(resolve, 1000));
   
   const items: MenuItem[] = await db.select().from(menuitem);
