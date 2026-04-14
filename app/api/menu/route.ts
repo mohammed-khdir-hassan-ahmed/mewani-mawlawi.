@@ -2,6 +2,7 @@ import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
 import { menuitem } from '@/src/db/schema';
 import { eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
 const sql = neon(process.env.DATABASE_URL!);
 const db = drizzle(sql);
@@ -44,6 +45,10 @@ export async function POST(request: Request) {
       .returning();
 
     console.log('✅ Item inserted successfully:', newItem[0]);
+    
+    // Revalidate the home page cache
+    revalidatePath('/');
+    
     return Response.json(newItem[0], { status: 201 });
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
