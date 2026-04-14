@@ -4,8 +4,6 @@ import { menuitem } from '@/src/db/schema';
 import MenuSearch from '@/components/MenuSearch';
 import ImageKitWrapper from '@/components/ImageKitWrapper';
 import Celebration from '@/components/Celebration';
-import { Suspense } from 'react';
-import MenuSkeleton from '@/components/MenuSkeleton';
 
 const sql = neon(process.env.DATABASE_URL!);
 const db = drizzle(sql);
@@ -63,10 +61,7 @@ export default async function Home() {
     <ImageKitWrapper>
       <Celebration />
       <div className="p-3 md:p-8 pt-0">
-        {/* Suspense boundary with skeleton loader */}
-        <Suspense fallback={<MenuSkeleton />}>
-          <MenuList />
-        </Suspense>
+        <MenuList />
       </div>
     </ImageKitWrapper>
   );

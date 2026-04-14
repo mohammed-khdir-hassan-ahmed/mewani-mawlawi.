@@ -15,8 +15,6 @@ const nextConfig: NextConfig = {
     ],
     // Enable AVIF format for better compression
     formats: ['image/avif', 'image/webp'],
-    // Minimize unused CSS
-    optimizeFonts: true,
     // Optimize images aggressively
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
@@ -24,11 +22,6 @@ const nextConfig: NextConfig = {
 
   /* Compression and bundling optimizations */
   compress: true,
-  
-  /* Enable SWR (stale-while-revalidate) for ISR */
-  experimental: {
-    isrMemoryCacheSize: 52 * 1024 * 1024, // 50MB ISR cache
-  },
 };
 
 export default nextConfig;
