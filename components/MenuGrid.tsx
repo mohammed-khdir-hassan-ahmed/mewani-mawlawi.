@@ -109,6 +109,7 @@ export default function MenuGrid({ items }: MenuGridProps) {
           setQuantity(1);
         }}>
           <DialogContent className="max-h-[85vh] overflow-y-auto max-w-md md:max-w-lg">
+            <DialogTitle>{selectedItem.name}</DialogTitle>
             {/* Image */}
             <div className="rounded-lg overflow-hidden mb-4 -mt-6 -mx-6">
               <IKImage
