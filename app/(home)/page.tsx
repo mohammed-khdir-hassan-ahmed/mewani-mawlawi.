@@ -20,23 +20,18 @@ async function MenuList() {
   const items: MenuItem[] = await db.select().from(menuitem);
 
   return (
-    <>
-      <div className="mt-3">
-        <h1 className="text-2xl md:text-3xl font-bold text-[#386641] text-center">میوانی مەولەوی</h1>
-        <p className="text-center text-gray-500 text-sm md:text-base mb-3 mt-2">خێرا لە خزمەت  ، بێوەنە لەتام</p>
-      </div>
-      
+    <div className="mt-3">
+      <h1 className="text-2xl md:text-3xl font-bold text-[#386641] text-center">میوانی مەولەوی</h1>
+      <p className="text-center text-gray-500 text-sm md:text-base mb-3 mt-2">خێرا لە خزمەت  ، بێوەنە لەتام</p>
       <MenuSearch items={items} />
-    </>
+    </div>
   );
 }
 
 export default async function Home() {
   return (
-    <>
-      <div className="p-3 md:p-8 pt-0">
-        <MenuList />
-      </div>
-    </>
+    <div className="p-3 md:p-8 pt-0">
+      <MenuList />
+    </div>
   );
 }
