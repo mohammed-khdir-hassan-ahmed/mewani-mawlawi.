@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { Home } from 'lucide-react';
+import { Home,LogIn } from 'lucide-react';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -35,7 +35,7 @@ export default function LoginPage() {
         localStorage.setItem('adminAuth', 'true');
         router.push('/admin/dashboard');
       } else {
-        setError(data.message || 'ناویی بەکارهێنەر یان تێپەڕە هەڵە یە');
+        setError(data.message || 'ناویی بەکارهێنەر یان وشەی نهێنی هەڵەیە');
       }
     } catch (err) {
       setError('خۆڵای سێرڤەر');
@@ -45,11 +45,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-green-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#386641] p-4">
       {/* Home Button */}
       <button
         onClick={() => router.push('/')}
-        className="absolute top-4 left-4 bg-white text-[#386641] hover:bg-gray-100 rounded-full p-3 shadow-lg transition"
+        className="absolute top-4 left-4 bg-green-600 text-white hover:bg-green-700 rounded-full p-3 shadow-lg transition"
       >
         <Home className="w-5 h-5" />
       </button>
@@ -70,12 +70,8 @@ export default function LoginPage() {
 
         {/* Title */}
         <h1 className="text-3xl font-bold text-center text-gray-900 mb-2">
-          چونەوەی بەرێوەبەر
+           داشبۆرد
         </h1>
-        <p className="text-center text-gray-600 mb-8">
-          ناویی بەکارهێنەر و تێپەڕەت دابنێ
-        </p>
-
         {/* Form */}
         <form onSubmit={handleLogin} className="space-y-4">
           {/* Username */}
@@ -88,25 +84,25 @@ export default function LoginPage() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="ناویی بەکارهێنایی بەرێوەبەر"
+              placeholder="ناویی بەکارهێنەر"
               required
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
             />
           </div>
 
           {/* Password */}
           <div>
             <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
-              تێپەڕە
+        وشەی نهێنی
             </label>
             <input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="تێپەڕەی بەرێوەبەر"
+              placeholder="وشەی نهێنی"
               required
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
             />
           </div>
 
@@ -119,9 +115,10 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#386641] hover:bg-[#2a4d30] text-white rounded-lg py-3 font-bold text-lg transition-all"
+            className="w-full bg-[#386641] hover:bg-[#2a4d30] text-white rounded-lg py-5 font-medium text-sm transition-all "
           >
-            {loading ? 'چونەوە...' : 'چونەوە'}
+            {loading ? 'چونەژوورەوە...' : 'چونەژوورەوە'}
+            <LogIn className="w-7 h-7 mr-2" />
           </Button>
         </form>
       </div>

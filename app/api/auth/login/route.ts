@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       return response;
     } else {
       return NextResponse.json(
-        { success: false, message: 'ناویی بەکارهێنەر یان تێپەڕە هەڵە یە' },
+        { success: false, message: 'ناویی بەکارهێنەر یان وشەی نهێنی هەڵەیە' },
         { status: 401 }
       );
     }

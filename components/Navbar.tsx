@@ -60,7 +60,7 @@ export default function Navbar() {
           
             </div>
             {/* Social Media Card */}
-            <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-lg px-2 py-2 border border-pink-200">
+            <div className="bg-pink-50 rounded-lg px-2 py-2 border border-pink-200">
               
               <div className="flex items-center gap-2 mb-2">
              <p className='font-bold text-xs'>سۆشیاڵ میدیاکانمان:</p>
@@ -129,7 +129,7 @@ export default function Navbar() {
             </div>
 
             {/* Phone Numbers Card */}
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg px-2 py-2 border-2 border-blue-200">
+            <div className="bg-blue-50 rounded-lg px-2 py-2 border-2 border-blue-200">
               
               <div className="flex items-center gap-2 mb-2">
                 <div className="bg-blue-500 rounded-full p-1.5">
@@ -148,7 +148,7 @@ export default function Navbar() {
             </div>
 
             {/* Opening Hours Card */}
-            <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg px-2 py-2 border-2 border-amber-200">
+            <div className="bg-amber-50 rounded-lg px-2 py-2 border-2 border-amber-200">
               <div className="flex items-center gap-2 mb-2">
                 <div className="bg-amber-500 rounded-full p-1.5">
                   <Clock size={14} className="text-white" />
@@ -166,7 +166,7 @@ export default function Navbar() {
             </div>
 
             {/* Location Card */}
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg px-2 py-2 border-2 border-purple-200">
+            <div className="bg-purple-50 rounded-lg px-2 py-2 border-2 border-purple-200">
               <div className="flex items-center gap-2 mb-2">
                 <div className="bg-purple-500 rounded-full p-1.5">
                   <MapPin size={14} className="text-white" />
