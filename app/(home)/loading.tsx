@@ -15,7 +15,7 @@ export default function Loading() {
           
           {/* Logo */}
           <Image
-            src="/image/logo.svg"
+            src="/image/logo.jpg"
             alt="Loading"
             width={128}
             height={128}

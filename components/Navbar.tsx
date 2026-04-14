@@ -21,7 +21,7 @@ export default function Navbar() {
         {/* Left side - Logo */}
         <div className="w-16 h-16 md:w-16 md:h-16 flex-shrink-0">
           <Image
-            src="/image/logo.svg"
+            src="/image/logo.jpg"
             alt="Logo"
             width={100}
             height={100}
@@ -48,7 +48,7 @@ export default function Navbar() {
           <div className="flex flex-col items-center gap-2 mb-3">
             <div className="p-3 rounded-lg h-28 w-28">
               <Image
-                src="/image/logo.svg"
+                src="/image/logo.jpg"
                 alt="Logo"
                 width={100}
                 height={100}
