@@ -1,22 +1,17 @@
 'use client';
 
-import { Plus, Minus, X } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Plus, Minus } from 'lucide-react';
+import { useState } from 'react';
+import Image from 'next/image';
+import { imageKitLoader, getResponsiveSizes } from '@/lib/imagekit-loader';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useState } from 'react';
-import { Image as IKImage } from '@imagekit/react';
-import { getThumbnailUrl, getDetailImageUrl } from '@/lib/imagekit';
+import { Button } from '@/components/ui/button';
+import OptimizedMenuItem from './OptimizedMenuItem';
 
 interface MenuItem {
   id: number;
@@ -36,90 +31,46 @@ function formatPrice(price: number): string {
 export default function MenuGrid({ items }: MenuGridProps) {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-      {items.map((item) => {
-        const handleOpen = () => setSelectedItem(item);
-        
-        return (
-        <div
-          key={item.id}
-          role="button"
-          tabIndex={0}
-          onClick={(e) => {
-            e.preventDefault();
-            handleOpen();
-          }}
-          onTouchStart={(e) => {
-            const touch = e.touches[0];
-            setTouchStart({ x: touch.clientX, y: touch.clientY });
-          }}
-          onTouchEnd={(e) => {
-            const touch = e.changedTouches[0];
-            const deltaX = Math.abs(touch.clientX - touchStart.x);
-            const deltaY = Math.abs(touch.clientY - touchStart.y);
-            
-            // Only trigger if touch didn't move much (tap, not scroll)
-            if (deltaX < 10 && deltaY < 10) {
-              e.preventDefault();
-              handleOpen();
-            }
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              handleOpen();
-            }
-          }}
-          className="overflow-hidden p-0 shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer rounded-lg bg-white flex flex-col h-full active:shadow-md"
-        >
-          <div className="relative w-full h-44 md:h-48 overflow-hidden shrink-0">
-            <IKImage
-              src={getThumbnailUrl(item.image_url)}
-              alt={item.name}
-              width={300}
-              height={200}
-              loading="lazy"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="p-4 flex flex-col justify-between flex-1">
-            <div className="flex items-start gap-3">
-              <div className="flex flex-col justify-center flex-1 min-w-0">
-                <div className='font-bold text-sm md:text-base line-clamp-2'>{item.name}</div>
-                <div className='text-xs font-bold text-gray-600'>{formatPrice(item.price)} دینار</div>
-              </div>
-              <Button 
-                className="bg-[#386641] hover:bg-[#2a4d30] text-white shrink-0 rounded-md"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <Plus className="w-5 h-5 stroke-2" />
-              </Button>
-            </div>
-          </div>
-        </div>
-        );
-      })}
+    <>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        {items.map((item, index) => (
+          <OptimizedMenuItem
+            key={item.id}
+            item={item}
+            onSelect={setSelectedItem}
+            // Priority loading for first 4 items (above the fold)
+            priority={index < 4}
+          />
+        ))}
+      </div>
 
-      {/* Modal Dialog */}
+      {/* Detail Modal with optimized image */}
       {selectedItem && (
-        <Dialog open={true} onOpenChange={() => {
-          setSelectedItem(null);
-          setQuantity(1);
-        }}>
+        <Dialog
+          open={true}
+          onOpenChange={() => {
+            setSelectedItem(null);
+            setQuantity(1);
+          }}
+        >
           <DialogContent className="max-h-[85vh] overflow-y-auto max-w-md md:max-w-lg">
             <DialogTitle>{selectedItem.name}</DialogTitle>
-            {/* Image */}
-            <div className="rounded-lg overflow-hidden mb-4 -mt-6 -mx-6">
-              <IKImage
-                src={getDetailImageUrl(selectedItem.image_url)}
+
+            {/* Detail Image with optimization */}
+            <div className="rounded-lg overflow-hidden mb-4 -mt-6 -mx-6 bg-gray-100">
+              <Image
+                loader={imageKitLoader}
+                src={selectedItem.image_url}
                 alt={selectedItem.name}
                 width={500}
                 height={400}
+                sizes={getResponsiveSizes('detail')}
                 priority
+                placeholder="blur"
+                blurDataURL="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 400'%3E%3Crect fill='%23f3f4f6' width='500' height='400'/%3E%3C/svg%3E"
+                quality={80}
                 className="w-full h-80 md:h-96 object-cover"
               />
             </div>
@@ -130,7 +81,7 @@ export default function MenuGrid({ items }: MenuGridProps) {
                 {selectedItem.name}
               </h2>
               <p className="text-2xl md:text-3xl font-bold text-[#386641] whitespace-nowrap">
-                {formatPrice(selectedItem.price * quantity)} دینار  
+                {formatPrice(selectedItem.price * quantity)} هەزار
               </p>
             </div>
 
@@ -151,21 +102,14 @@ export default function MenuGrid({ items }: MenuGridProps) {
               </button>
             </div>
 
-            {/* Buttons */}
-            <div className="flex gap-2 flex-col">
-              <Button 
-                className="w-full bg-[#386641] hover:bg-[#2a4d30] text-white rounded-lg py-4 md:py-5 text-lg font-semibold"
-                onClick={() => {
-                  setSelectedItem(null);
-                  setQuantity(1);
-                }}
-              >
-                داخستن
-              </Button>
-            </div>
+            {/* Action Button */}
+            <Button className="w-full bg-[#386641] hover:bg-[#2a4d30] text-white py-3 font-bold">
+              <Plus className="w-4 h-4 mr-2" />
+              سەبتدا زیادبکە
+            </Button>
           </DialogContent>
         </Dialog>
       )}
-    </div>
+    </>
   );
 }
