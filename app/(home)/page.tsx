@@ -16,11 +16,6 @@ interface MenuItem {
   category?: string;
 }
 
-/**
- * Fetch menu items with optimized caching
- * ISR (Incremental Static Regeneration): Cache for 3600 seconds (1 hour)
- * Then revalidate the page every hour
- */
 async function MenuList() {
   try {
     // Fetch with Next.js cache
