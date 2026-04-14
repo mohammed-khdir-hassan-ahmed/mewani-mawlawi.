@@ -1,23 +1,52 @@
+'use client';
+
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export default function Loading() {
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!isVisible) {
+    return null;
+  }
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white">
+    <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
       <div className="flex flex-col items-center gap-4">
-        <div className="animate-bounce">
+        <div className="w-24 h-24 md:w-32 md:h-32 animate-bounce">
           <Image
             src="/image/logo.svg"
             alt="Loading"
             width={120}
             height={120}
             priority
+            className="w-full h-full object-contain"
           />
         </div>
+        <p className="text-sm md:text-base text-gray-600 font-semibold animate-pulse">
+          جاری بارکردن...
+        </p>
       </div>
       <style>{`
-        @keyframes shimmer {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        .animate-bounce {
+          animation: bounce 1s infinite;
+        }
+        @media (max-width: 768px) {
+          .animate-bounce {
+            animation: bounce 0.8s infinite;
+          }
         }
       `}</style>
     </div>
