@@ -5,4 +5,5 @@ export const menuitem = pgTable('menuitem', {
   name: varchar({ length: 255 }).notNull(),
   price: integer().notNull(),
   image_url: varchar({ length: 255 }).notNull(),
+  category: varchar({ length: 50 }).notNull().default('main'),
 });

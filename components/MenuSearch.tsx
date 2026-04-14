@@ -20,7 +20,7 @@ interface MenuSearchProps {
 export default function MenuSearch({ items }: MenuSearchProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSortedByPrice, setIsSortedByPrice] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const categories = [
     { id: 'all', name: ' هەموو خواردنەکان', icon: Home },
@@ -33,7 +33,7 @@ export default function MenuSearch({ items }: MenuSearchProps) {
 
   let filteredItems = items.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = !selectedCategory || selectedCategory === 'all' || item.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -53,13 +53,7 @@ export default function MenuSearch({ items }: MenuSearchProps) {
             return (
               <button
                 key={category.id}
-                onClick={() => {
-                  if (category.id === 'all') {
-                    setSelectedCategory('all');
-                  } else {
-                    setSelectedCategory(isSelected ? null : category.id);
-                  }
-                }}
+                onClick={() => setSelectedCategory(category.id)}
                 className={`flex flex-col items-center gap-0.5 px-2 md:px-3 py-1.5 md:py-2 rounded-none transition-all duration-200 flex-shrink-0 border-b-2 ${
                   isSelected
                     ? 'bg-transparent border-b-2 border-[#386641] text-[#386641]'
