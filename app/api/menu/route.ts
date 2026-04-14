@@ -21,15 +21,19 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, price, image_url } = body;
 
+    console.log('📥 POST /api/menu received:', { name, price, image_url: image_url?.substring(0, 50) + '...' });
+
     // Validate input
     if (!name || !price || !image_url) {
+      console.error('❌ Missing required fields');
       return Response.json(
-        { error: 'Missing required fields: name, price, image_url' },
+        { error: `Missing required fields. Received: ${JSON.stringify({ name: !!name, price: !!price, image_url: !!image_url })}` },
         { status: 400 }
       );
     }
 
     // Insert new item into database
+    console.log('🔄 Inserting to database...');
     const newItem = await db
       .insert(menuitem)
       .values({
@@ -39,9 +43,11 @@ export async function POST(request: Request) {
       })
       .returning();
 
+    console.log('✅ Item inserted successfully:', newItem[0]);
     return Response.json(newItem[0], { status: 201 });
   } catch (error) {
-    console.error('Error adding menu item:', error);
-    return Response.json({ error: 'Failed to add menu item' }, { status: 500 });
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error('❌ Error adding menu item:', errorMsg);
+    return Response.json({ error: `Failed to add menu item: ${errorMsg}` }, { status: 500 });
   }
 }

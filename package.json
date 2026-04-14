@@ -9,11 +9,15 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@imagekit/next": "^2.1.5",
+    "@imagekit/react": "^5.0.2",
     "@neondatabase/serverless": "^1.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
+    "imagekit": "^6.0.0",
+    "imagekit-react": "^0.1.0",
     "lucide-react": "^1.8.0",
     "neon": "^2.0.0",
     "next": "16.2.3",

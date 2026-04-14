@@ -17,11 +17,18 @@ export async function PUT(
     const { name, price, image_url } = body;
 
     // Validate input
-    if (!name || !price || !image_url) {
+    if (!name || !price) {
       return Response.json(
-        { error: 'Missing required fields: name, price, image_url' },
+        { error: 'Missing required fields: name, price' },
         { status: 400 }
       );
+    }
+
+    // Get current item to preserve image if not updating
+    const currentItem = await db.select().from(menuitem).where(eq(menuitem.id, id));
+    
+    if (currentItem.length === 0) {
+      return Response.json({ error: 'Item not found' }, { status: 404 });
     }
 
     // Update item in database
@@ -30,14 +37,10 @@ export async function PUT(
       .set({
         name,
         price: parseInt(price),
-        image_url,
+        image_url: image_url || currentItem[0].image_url, // Use new image or keep old one
       })
       .where(eq(menuitem.id, id))
       .returning();
-
-    if (updatedItem.length === 0) {
-      return Response.json({ error: 'Item not found' }, { status: 404 });
-    }
 
     return Response.json(updatedItem[0], { status: 200 });
   } catch (error) {

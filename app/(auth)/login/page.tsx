@@ -19,6 +19,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      console.log('🔐 Attempting login with username:', username);
+      
       // Send login request to server
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -28,18 +30,24 @@ export default function LoginPage() {
         body: JSON.stringify({ username, password }),
       });
 
+      console.log('📥 Login response status:', response.status);
       const data = await response.json();
+      console.log('📥 Login response data:', data);
 
       if (response.ok) {
         // Set auth token in localStorage as backup for client-side checks
         localStorage.setItem('adminAuth', 'true');
+        console.log('✅ Login successful, redirecting...');
         router.push('/admin/dashboard');
       } else {
-        setError(data.message || 'ناویی بەکارهێنەر یان وشەی نهێنی هەڵەیە');
+        const errorMsg = data.message || 'ناویی بەکارهێنەر یان وشەی نهێنی هەڵەیە';
+        setError(errorMsg);
+        console.error('❌ Login failed:', errorMsg);
       }
     } catch (err) {
-      setError('خۆڵای سێرڤەر');
-      console.error('Login error:', err);
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      setError('خۆڵای سێرڤەر: ' + errorMsg);
+      console.error('❌ Login error:', err);
     }
     setLoading(false);
   };

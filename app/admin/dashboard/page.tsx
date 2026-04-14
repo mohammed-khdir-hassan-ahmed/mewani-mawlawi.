@@ -11,8 +11,9 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Plus, LogOut, Edit, Trash2 } from 'lucide-react';
+import { Plus, LogOut, Edit, Trash2, Upload } from 'lucide-react';
 import Image from 'next/image';
+import { Image as IKImage, ImageKitProvider } from '@imagekit/react';
 
 interface MenuItem {
   id?: number;
@@ -30,6 +31,7 @@ export default function DashboardPage() {
     name: '',
     price: '',
     image_url: '',
+    image_file_name: '',
   });
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
@@ -75,12 +77,61 @@ export default function DashboardPage() {
   };
 
   // Handle form input
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, files } = e.target;
+    
+    if (name === 'image_file' && files && files[0]) {
+      const file = files[0];
+      try {
+        setMessage('وێنە بارکرادەكە...');
+        setMessageType('success');
+        
+        console.log('📤 Starting server-side upload...');
+        console.log('  File:', file.name, '(' + file.size + ' bytes)');
+        
+        // Create FormData for file upload
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        // Step 1: Upload to backend (which uploads to ImageKit)
+        const uploadRes = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        console.log('📥 Upload response status:', uploadRes.status);
+        const uploadData = await uploadRes.json();
+        console.log('📥 Upload response:', uploadData);
+
+        if (!uploadRes.ok) {
+          throw new Error(uploadData.error || 'Upload failed');
+        }
+
+        if (!uploadData.filePath) {
+          throw new Error('No file path returned from upload');
+        }
+
+        setFormData((prev) => ({
+          ...prev,
+          image_url: uploadData.filePath,
+          image_file_name: file.name,
+        }));
+        
+        setMessage('وێنە بسەرکەوتوویی بارکرا ✅');
+        setMessageType('success');
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        // eslint-disable-next-line no-console
+        console.error('Upload error:', errorMessage);
+        setMessage(`هەڵە: ${errorMessage}`);
+        setMessageType('error');
+      }
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   // Handle form submission
@@ -90,6 +141,26 @@ export default function DashboardPage() {
     setMessage('');
 
     try {
+      if (!formData.name || !formData.price) {
+        setMessage('براکو ناو و نرخ پڕ بکە');
+        setMessageType('error');
+        setSubmitting(false);
+        return;
+      }
+
+      if (!formData.image_url) {
+        setMessage('براکو وێنەیەک بسووڕینەوە');
+        setMessageType('error');
+        setSubmitting(false);
+        return;
+      }
+
+      console.log('📤 Submitting form with data:', {
+        name: formData.name,
+        price: formData.price,
+        image_url: formData.image_url,
+      });
+
       const response = await fetch('/api/menu', {
         method: 'POST',
         headers: {
@@ -102,19 +173,26 @@ export default function DashboardPage() {
         }),
       });
 
+      console.log('📥 Response status:', response.status);
+      const responseData = await response.json();
+      console.log('📥 Response data:', responseData);
+
       if (response.ok) {
-        setMessage('خواردن زیادکرا!');
+        setMessage('خواردن بسەرکەوتوویی زیادکرا!');
         setMessageType('success');
-        setFormData({ name: '', price: '', image_url: '' });
+        setFormData({ name: '', price: '', image_url: '', image_file_name: '' });
         fetchItems(); // Refresh the list
       } else {
-        setMessage('هەڵە لە زیادکردندا');
+        const errorMsg = responseData?.error || 'خواردن زیاد نەکرا';
+        setMessage(`هەڵە: ${errorMsg}`);
         setMessageType('error');
       }
     } catch (error) {
-      setMessage('هەڵە لە زیادکردندا');
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setMessage(`هەڵە: ${errorMessage}`);
       setMessageType('error');
-      console.error('Error:', error);
+      // eslint-disable-next-line no-console
+      console.error('Submit Error:', error);
     }
     setSubmitting(false);
   };
@@ -156,6 +234,7 @@ export default function DashboardPage() {
       name: item.name,
       price: item.price.toString(),
       image_url: item.image_url,
+      image_file_name: '',
     });
     setShowEditModal(true);
   };
@@ -184,7 +263,7 @@ export default function DashboardPage() {
       if (response.ok) {
         setMessage('خواردن نوێکراوە!');
         setMessageType('success');
-        setFormData({ name: '', price: '', image_url: '' });
+        setFormData({ name: '', price: '', image_url: '', image_file_name: '' });
         setShowEditModal(false);
         setEditingId(null);
         fetchItems();
@@ -209,7 +288,8 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#386641]">
+    <ImageKitProvider urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || ''}>
+      <div className="min-h-screen bg-[#386641]">
       {/* Header */}
       <div className="bg-white shadow-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
@@ -277,30 +357,36 @@ export default function DashboardPage() {
                 />
               </div>
 
-              {/* Image URL */}
+              {/* Image Upload */}
               <div>
-                <label htmlFor="image_url" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Image URL
+                <label htmlFor="image_file" className="block text-sm font-semibold text-gray-700 mb-2">
+                  وێنەی خواردن
                 </label>
-                <input
-                  id="image_url"
-                  type="url"
-                  name="image_url"
-                  value={formData.image_url}
-                  onChange={handleInputChange}
-                  placeholder="https://example.com/image.jpg"
-                  required
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
-                />
+                <div className="relative">
+                  <input
+                    id="image_file"
+                    type="file"
+                    name="image_file"
+                    onChange={handleInputChange}
+                    accept="image/*"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  <div className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg bg-white text-gray-900 cursor-pointer hover:border-[#386641] transition flex items-center gap-2 justify-center font-semibold">
+                    <Upload className="w-4 h-4 text-gray-500" />
+                    {formData.image_file_name ? formData.image_file_name : 'هەڵبژاردنی ڕەسمی خواردن'}
+                  </div>
+                </div>
               </div>
 
               {/* Image Preview */}
               {formData.image_url && (
                 <div className="mt-4">
                   <p className="text-sm font-semibold text-gray-700 mb-2">Preview</p>
-                  <img
+                  <IKImage
                     src={formData.image_url}
                     alt="Preview"
+                    width={400}
+                    height={192}
                     className="w-full h-48 object-cover rounded-lg"
                   />
                 </div>
@@ -336,9 +422,11 @@ export default function DashboardPage() {
                 items.map((item, idx) => (
                   <div key={item.id || idx} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 justify-between">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <img
+                      <IKImage
                         src={item.image_url}
                         alt={item.name}
+                        width={64}
+                        height={64}
                         className="w-16 h-16 object-cover rounded-lg"
                       />
                       <div className="flex-1 min-w-0">
@@ -411,17 +499,33 @@ export default function DashboardPage() {
 
             <div>
               <label htmlFor="edit-image" className="block text-sm font-semibold text-gray-700 mb-2">
-                URL وێنە
+                وێنە بسووڕینەوە
               </label>
-              <input
-                id="edit-image"
-                type="url"
-                name="image_url"
-                value={formData.image_url}
-                onChange={handleInputChange}
-                required
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600"
-              />
+              <div className="relative">
+                <input
+                  id="edit-image"
+                  type="file"
+                  name="image_file"
+                  onChange={handleInputChange}
+                  accept="image/*"
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <div className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg bg-white text-gray-900 cursor-pointer hover:border-green-600 transition flex items-center gap-2 justify-center font-semibold">
+                  <Upload className="w-4 h-4 text-gray-500" />
+                  {formData.image_file_name ? formData.image_file_name : 'فایل هیلبژێرە'}
+                </div>
+              </div>
+              {formData.image_url && (
+                <div className="mt-3">
+                  <IKImage
+                    src={formData.image_url}
+                    alt="Preview"
+                    width={400}
+                    height={128}
+                    className="w-full h-32 object-cover rounded-lg"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Message in Edit Dialog */}
@@ -437,7 +541,7 @@ export default function DashboardPage() {
                 onClick={() => {
                   setShowEditModal(false);
                   setEditingId(null);
-                  setFormData({ name: '', price: '', image_url: '' });
+                  setFormData({ name: '', price: '', image_url: '', image_file_name: '' });
                   setMessage('');
                   setMessageType('success');
                 }}
@@ -498,5 +602,6 @@ export default function DashboardPage() {
         </DialogContent>
       </Dialog>
     </div>
+    </ImageKitProvider>
   );
 }

@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useState } from 'react';
+import { Image as IKImage } from '@imagekit/react';
 
 interface MenuItem {
   id: number;
@@ -73,9 +74,11 @@ export default function MenuGrid({ items }: MenuGridProps) {
           className="overflow-hidden p-0 shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer rounded-lg bg-white flex flex-col h-full active:shadow-md"
         >
           <div className="relative w-full h-44 md:h-48 overflow-hidden shrink-0">
-            <img
+            <IKImage
               src={item.image_url}
               alt={item.name}
+              width={300}
+              height={200}
               className="w-full h-full object-cover"
             />
           </div>
@@ -108,9 +111,11 @@ export default function MenuGrid({ items }: MenuGridProps) {
           <DialogContent className="max-h-[85vh] overflow-y-auto max-w-md md:max-w-lg">
             {/* Image */}
             <div className="rounded-lg overflow-hidden mb-4 -mt-6 -mx-6">
-              <img
+              <IKImage
                 src={selectedItem.image_url}
                 alt={selectedItem.name}
+                width={500}
+                height={400}
                 className="w-full h-80 md:h-96 object-cover"
               />
             </div>

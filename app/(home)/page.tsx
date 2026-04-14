@@ -2,6 +2,7 @@ import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
 import { menuitem } from '@/src/db/schema';
 import MenuSearch from '@/components/MenuSearch';
+import ImageKitWrapper from '@/components/ImageKitWrapper';
 
 const sql = neon(process.env.DATABASE_URL!);
 const db = drizzle(sql);
@@ -30,8 +31,10 @@ async function MenuList() {
 
 export default async function Home() {
   return (
-    <div className="p-3 md:p-8 pt-0">
-      <MenuList />
-    </div>
+    <ImageKitWrapper>
+      <div className="p-3 md:p-8 pt-0">
+        <MenuList />
+      </div>
+    </ImageKitWrapper>
   );
 }
