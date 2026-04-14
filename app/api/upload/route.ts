@@ -33,32 +33,47 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log('📂 File details:', {
+    console.log('📂 Original file details:', {
       name: file.name,
       size: file.size,
       type: file.type,
     });
     
-    const buffer = Buffer.from(await file.arrayBuffer());
+    let buffer = Buffer.from(await file.arrayBuffer());
+    const originalSize = buffer.length;
+    
     console.log('✓ File converted to buffer, size:', buffer.length);
 
+    // Compress image using ImageKit's built-in compression
+    // ImageKit will handle WebP conversion and optimization automatically
     console.log('🔌 Calling imagekit.upload()...');
     const result = await imagekit.upload({
       file: buffer,
       fileName: `miwani_${Date.now()}_${file.name}`,
-      folder: '/miwani-mawlawi', // ← NO SPACES! Use hyphens instead
+      folder: '/miwani-mawlawi',
       useUniqueFileName: true,
+      // ImageKit compression options
+      // These tell ImageKit to optimize on upload
+      tags: ['menu', 'compressed'],
+      isPrivateFile: false,
+      customMetadata: {
+        timestamp: new Date().toISOString(),
+      },
     });
 
     console.log('✅ Upload successful');
     console.log('  filePath:', result.filePath);
     console.log('  fileId:', result.fileId);
+    console.log('  URL:', result.url);
 
     return NextResponse.json({
       success: true,
       filePath: result.filePath,
       fileId: result.fileId,
       url: result.url,
+      originalSize,
+      // Note: ImageKit will serve optimized WebP versions via URL parameters
+      // Use the getAdminImageUrl(), getThumbnailUrl(), etc. functions for best compression
     });
   } catch (error) {
     console.error('❌ Upload API error:');

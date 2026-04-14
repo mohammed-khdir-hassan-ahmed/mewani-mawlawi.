@@ -14,6 +14,7 @@ import {
 import { Plus, LogOut, Edit, Trash2, Upload } from 'lucide-react';
 import Image from 'next/image';
 import { Image as IKImage, ImageKitProvider } from '@imagekit/react';
+import { getAdminImageUrl } from '@/lib/imagekit';
 
 interface MenuItem {
   id?: number;
@@ -383,7 +384,7 @@ export default function DashboardPage() {
                 <div className="mt-4">
                   <p className="text-sm font-semibold text-gray-700 mb-2">Preview</p>
                   <IKImage
-                    src={formData.image_url}
+                    src={getAdminImageUrl(formData.image_url)}
                     alt="Preview"
                     width={400}
                     height={192}
@@ -423,7 +424,7 @@ export default function DashboardPage() {
                   <div key={item.id || idx} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 justify-between">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <IKImage
-                        src={item.image_url}
+                        src={getAdminImageUrl(item.image_url)}
                         alt={item.name}
                         width={64}
                         height={64}

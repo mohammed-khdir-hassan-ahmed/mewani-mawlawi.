@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { useState } from 'react';
 import { Image as IKImage } from '@imagekit/react';
+import { getThumbnailUrl, getDetailImageUrl } from '@/lib/imagekit';
 
 interface MenuItem {
   id: number;
@@ -75,7 +76,7 @@ export default function MenuGrid({ items }: MenuGridProps) {
         >
           <div className="relative w-full h-44 md:h-48 overflow-hidden shrink-0">
             <IKImage
-              src={item.image_url}
+              src={getThumbnailUrl(item.image_url)}
               alt={item.name}
               width={300}
               height={200}
@@ -113,7 +114,7 @@ export default function MenuGrid({ items }: MenuGridProps) {
             {/* Image */}
             <div className="rounded-lg overflow-hidden mb-4 -mt-6 -mx-6">
               <IKImage
-                src={selectedItem.image_url}
+                src={getDetailImageUrl(selectedItem.image_url)}
                 alt={selectedItem.name}
                 width={500}
                 height={400}
