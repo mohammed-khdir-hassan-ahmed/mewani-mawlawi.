@@ -105,47 +105,47 @@ export default function MenuGrid({ items }: MenuGridProps) {
           setSelectedItem(null);
           setQuantity(1);
         }}>
-          <DialogContent className="max-h-[85vh] overflow-y-auto max-w-sm">
+          <DialogContent className="max-h-[85vh] overflow-y-auto max-w-md md:max-w-lg">
             {/* Image */}
             <div className="rounded-lg overflow-hidden mb-4 -mt-6 -mx-6">
               <img
                 src={selectedItem.image_url}
                 alt={selectedItem.name}
-                className="w-full h-60 object-cover"
+                className="w-full h-80 md:h-96 object-cover"
               />
             </div>
 
             {/* Title and Price */}
-            <div className="mb-4 flex items-center justify-between gap-2">
-              <h2 className="text-xl font-bold text-gray-900 flex-1">
+            <div className="mb-6 flex items-center justify-between gap-2">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 flex-1">
                 {selectedItem.name}
               </h2>
-              <p className="text-2xl font-bold text-[#386641] whitespace-nowrap">
+              <p className="text-2xl md:text-3xl font-bold text-[#386641] whitespace-nowrap">
                 {formatPrice(selectedItem.price)} هەزار
               </p>
             </div>
 
             {/* Quantity Selector */}
-            <div className="flex items-center justify-center gap-3 bg-gray-100 rounded-lg p-3 mb-4 w-full mx-auto">
+            <div className="flex items-center justify-center gap-3 bg-gray-100 rounded-lg p-4 mb-6 w-full mx-auto">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="hover:bg-gray-200 rounded p-1 transition"
+                className="hover:bg-gray-200 rounded p-2 transition"
               >
-                <Minus className="w-4 h-4" />
+                <Minus className="w-5 h-5" />
               </button>
-              <span className="text-lg font-bold w-8 text-center">{quantity}</span>
+              <span className="text-xl font-bold w-10 text-center">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
-                className="hover:bg-gray-200 rounded p-1 transition"
+                className="hover:bg-gray-200 rounded p-2 transition"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-5 h-5" />
               </button>
             </div>
 
             {/* Buttons */}
             <div className="flex gap-2 flex-col">
               <Button 
-                className="w-full bg-[#386641] hover:bg-[#2a4d30] text-white rounded-lg py-3 font-semibold"
+                className="w-full bg-[#386641] hover:bg-[#2a4d30] text-white rounded-lg py-4 md:py-5 text-lg font-semibold"
                 onClick={() => {
                   setSelectedItem(null);
                   setQuantity(1);
