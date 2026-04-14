@@ -121,7 +121,7 @@ export default function MenuGrid({ items }: MenuGridProps) {
                 {selectedItem.name}
               </h2>
               <p className="text-2xl md:text-3xl font-bold text-[#386641] whitespace-nowrap">
-                {formatPrice(selectedItem.price)} هەزار
+                {formatPrice(selectedItem.price * quantity)} هەزار
               </p>
             </div>
 
