@@ -34,6 +34,7 @@ function formatPrice(price: number): string {
 export default function MenuGrid({ items }: MenuGridProps) {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
@@ -49,9 +50,20 @@ export default function MenuGrid({ items }: MenuGridProps) {
             e.preventDefault();
             handleOpen();
           }}
+          onTouchStart={(e) => {
+            const touch = e.touches[0];
+            setTouchStart({ x: touch.clientX, y: touch.clientY });
+          }}
           onTouchEnd={(e) => {
-            e.preventDefault();
-            handleOpen();
+            const touch = e.changedTouches[0];
+            const deltaX = Math.abs(touch.clientX - touchStart.x);
+            const deltaY = Math.abs(touch.clientY - touchStart.y);
+            
+            // Only trigger if touch didn't move much (tap, not scroll)
+            if (deltaX < 10 && deltaY < 10) {
+              e.preventDefault();
+              handleOpen();
+            }
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
