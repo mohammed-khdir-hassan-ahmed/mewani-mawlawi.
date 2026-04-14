@@ -7,6 +7,7 @@
 
 import Image from 'next/image';
 import { imageKitLoader, getResponsiveSizes } from '@/lib/imagekit-loader';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,7 @@ interface OptimizedMenuItemProps {
   item: MenuItem;
   onSelect: (item: MenuItem) => void;
   priority?: boolean;
+  index?: number;
 }
 
 function formatPrice(price: number): string {
@@ -32,11 +34,16 @@ export default function OptimizedMenuItem({
   item,
   onSelect,
   priority = false,
+  index = 0,
 }: OptimizedMenuItemProps) {
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
+  
+  // Alternate animation direction: even items from left, odd from right
+  const isFromLeft = index % 2 === 0;
+  const initialX = isFromLeft ? -50 : 50;
 
   return (
-    <div
+    <motion.div
       role="button"
       tabIndex={0}
       onClick={() => onSelect(item)}
@@ -58,6 +65,10 @@ export default function OptimizedMenuItem({
           onSelect(item);
         }
       }}
+      initial={{ opacity: 0, x: initialX, scale: 0.9 }}
+      whileInView={{ opacity: 1, x: 0, scale: 1 }}
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{ duration: 0.6, ease: 'easeOut', delay: (index % 2) * 0.15 }}
       className="overflow-hidden p-0 shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer rounded-lg bg-white flex flex-col h-full active:shadow-md"
     >
       {/* Image with Next.js Image component for optimization */}
@@ -103,6 +114,6 @@ export default function OptimizedMenuItem({
           </Button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
