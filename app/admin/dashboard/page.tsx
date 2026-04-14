@@ -21,6 +21,7 @@ interface MenuItem {
   name: string;
   price: number;
   image_url: string;
+  category?: string;
 }
 
 export default function DashboardPage() {
@@ -33,6 +34,7 @@ export default function DashboardPage() {
     price: '',
     image_url: '',
     image_file_name: '',
+    category: '',
   });
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
@@ -78,8 +80,8 @@ export default function DashboardPage() {
   };
 
   // Handle form input
-  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, files } = e.target;
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, files } = e.target as HTMLInputElement;
     
     if (name === 'image_file' && files && files[0]) {
       const file = files[0];
@@ -171,6 +173,7 @@ export default function DashboardPage() {
           name: formData.name,
           price: parseInt(formData.price),
           image_url: formData.image_url,
+          category: formData.category,
         }),
       });
 
@@ -181,7 +184,7 @@ export default function DashboardPage() {
       if (response.ok) {
         setMessage('خواردن بسەرکەوتوویی زیادکرا!');
         setMessageType('success');
-        setFormData({ name: '', price: '', image_url: '', image_file_name: '' });
+        setFormData({ name: '', price: '', image_url: '', image_file_name: '', category: '' });
         fetchItems(); // Refresh the list
       } else {
         const errorMsg = responseData?.error || 'خواردن زیاد نەکرا';
@@ -236,6 +239,7 @@ export default function DashboardPage() {
       price: item.price.toString(),
       image_url: item.image_url,
       image_file_name: '',
+      category: item.category || '',
     });
     setShowEditModal(true);
   };
@@ -258,13 +262,14 @@ export default function DashboardPage() {
           name: formData.name,
           price: parseInt(formData.price),
           image_url: formData.image_url,
+          category: formData.category,
         }),
       });
 
       if (response.ok) {
         setMessage('خواردن نوێکراوە!');
         setMessageType('success');
-        setFormData({ name: '', price: '', image_url: '', image_file_name: '' });
+        setFormData({ name: '', price: '', image_url: '', image_file_name: '', category: '' });
         setShowEditModal(false);
         setEditingId(null);
         fetchItems();
@@ -358,6 +363,27 @@ export default function DashboardPage() {
                 />
               </div>
 
+              {/* Category */}
+              <div>
+                <label htmlFor="category" className="block text-sm font-semibold text-gray-700 mb-2">
+                  بەشەکان
+                </label>
+                <select
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
+                >
+                  <option value="">هەڵبژاردنی بەشەکان</option>
+                  <option value="main">خواردنە سەرەکیەکان</option>
+                  <option value="pizza">برژاو</option>
+                  <option value="drinks">خواردنەوە</option>
+                  <option value="appetizers">مقەبیلات</option>
+                  <option value="breakfast">بەیانیان</option>
+                </select>
+              </div>
+
               {/* Image Upload */}
               <div>
                 <label htmlFor="image_file" className="block text-sm font-semibold text-gray-700 mb-2">
@@ -433,6 +459,9 @@ export default function DashboardPage() {
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-gray-900 truncate">{item.name}</p>
                         <p className="text-sm text-[#386641] font-semibold">{item.price} هەزار</p>
+                        {item.category && (
+                          <p className="text-xs text-gray-600">قۆناغ: {item.category}</p>
+                        )}
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -499,6 +528,26 @@ export default function DashboardPage() {
             </div>
 
             <div>
+              <label htmlFor="edit-category" className="block text-sm font-semibold text-gray-700 mb-2">
+                قۆناغ
+              </label>
+              <select
+                id="edit-category"
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600 text-gray-900"
+              >
+                <option value="">هەڵبژاردنی قۆناغ</option>
+                <option value="main">خواردنە سەرەکیەکان</option>
+                <option value="pizza">برژاو</option>
+                <option value="drinks">خواردنەوە</option>
+                <option value="appetizers">مقەبیلات</option>
+                <option value="breakfast">بەیانیان</option>
+              </select>
+            </div>
+
+            <div>
               <label htmlFor="edit-image" className="block text-sm font-semibold text-gray-700 mb-2">
                 وێنە بسووڕینەوە
               </label>
@@ -542,7 +591,7 @@ export default function DashboardPage() {
                 onClick={() => {
                   setShowEditModal(false);
                   setEditingId(null);
-                  setFormData({ name: '', price: '', image_url: '', image_file_name: '' });
+                  setFormData({ name: '', price: '', image_url: '', image_file_name: '', category: '' });
                   setMessage('');
                   setMessageType('success');
                 }}

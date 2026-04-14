@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Utensils, Pizza, Coffee, Salad, Egg } from 'lucide-react';
+import { Search, Utensils, Pizza, Coffee, Salad, Egg, ArrowDownNarrowWideIcon, Home } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import MenuGrid from '@/components/MenuGrid';
 
@@ -10,6 +10,7 @@ interface MenuItem {
   name: string;
   price: number;
   image_url: string;
+  category?: string;
 }
 
 interface MenuSearchProps {
@@ -18,10 +19,27 @@ interface MenuSearchProps {
 
 export default function MenuSearch({ items }: MenuSearchProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSortedByPrice, setIsSortedByPrice] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const filteredItems = items.filter(item =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const categories = [
+    { id: 'all', name: ' هەموو خواردنەکان', icon: Home },
+    { id: 'main', name: 'خواردنە سەرەکیەکان', icon: Utensils },
+    { id: 'pizza', name: 'برژاو', icon: Pizza },
+    { id: 'drinks', name: 'خواردنەوە', icon: Coffee },
+    { id: 'appetizers', name: 'مقەبیلات', icon: Salad },
+    { id: 'breakfast', name: 'بەیانیان', icon: Egg },
+  ];
+
+  let filteredItems = items.filter(item => {
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = !selectedCategory || selectedCategory === 'all' || item.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  if (isSortedByPrice) {
+    filteredItems = [...filteredItems].sort((a, b) => a.price - b.price);
+  }
 
   return (
     <>
@@ -29,38 +47,55 @@ export default function MenuSearch({ items }: MenuSearchProps) {
       <div className="flex flex-col gap-3 items-center mb-4 px-1 md:px-0 w-full">
         {/* Categories */}
         <div className="flex justify-center gap-1 md:gap-3 overflow-x-auto w-full md:pb-2">
-          <button className="flex flex-col items-center gap-0.5 px-2 md:px-3 py-1.5 md:py-2 rounded-none bg-transparent hover:border-b-2 hover:border-[#386641] hover:text-[#386641] transition-all duration-200 text-gray-600 flex-shrink-0 border-b-2 border-transparent">
-            <Utensils className="w-4 h-4 md:w-5 md:h-5" />
-            <span className="text-[11px] md:text-xs font-medium text-center whitespace-nowrap"> خواردنە سەرەکیەکان</span>
-          </button>
-          <button className="flex flex-col items-center gap-0.5 px-2 md:px-3 py-1.5 md:py-2 rounded-none bg-transparent hover:border-b-2 hover:border-[#386641] hover:text-[#386641] transition-all duration-200 text-gray-600 flex-shrink-0 border-b-2 border-transparent">
-            <Pizza className="w-4 h-4 md:w-5 md:h-5" />
-            <span className="text-[11px] md:text-xs font-medium text-center whitespace-nowrap">برژاو</span>
-          </button>
-          <button className="flex flex-col items-center gap-0.5 px-2 md:px-3 py-1.5 md:py-2 rounded-none bg-transparent hover:border-b-2 hover:border-[#386641] hover:text-[#386641] transition-all duration-200 text-gray-600 flex-shrink-0 border-b-2 border-transparent">
-            <Coffee className="w-4 h-4 md:w-5 md:h-5" />
-            <span className="text-[11px] md:text-xs font-medium text-center whitespace-nowrap">خواردنەوە</span>
-          </button>
-          <button className="flex flex-col items-center gap-0.5 px-2 md:px-3 py-1.5 md:py-2 rounded-none bg-transparent hover:border-b-2 hover:border-[#386641] hover:text-[#386641] transition-all duration-200 text-gray-600 flex-shrink-0 border-b-2 border-transparent">
-            <Salad className="w-4 h-4 md:w-5 md:h-5" />
-            <span className="text-[11px] md:text-xs font-medium text-center whitespace-nowrap">مقەبیلات</span>
-          </button>
-          <button className="flex flex-col items-center gap-0.5 px-2 md:px-3 py-1.5 md:py-2 rounded-none bg-transparent hover:border-b-2 hover:border-[#386641] hover:text-[#386641] transition-all duration-200 text-gray-600 flex-shrink-0 border-b-2 border-transparent">
-            <Egg className="w-4 h-4 md:w-5 md:h-5" />
-            <span className="text-[11px] md:text-xs font-medium text-center whitespace-nowrap">بەیانیان</span>
-          </button>
+          {categories.map((category) => {
+            const IconComponent = category.icon;
+            const isSelected = selectedCategory === category.id;
+            return (
+              <button
+                key={category.id}
+                onClick={() => {
+                  if (category.id === 'all') {
+                    setSelectedCategory('all');
+                  } else {
+                    setSelectedCategory(isSelected ? null : category.id);
+                  }
+                }}
+                className={`flex flex-col items-center gap-0.5 px-2 md:px-3 py-1.5 md:py-2 rounded-none transition-all duration-200 flex-shrink-0 border-b-2 ${
+                  isSelected
+                    ? 'bg-transparent border-b-2 border-[#386641] text-[#386641]'
+                    : 'bg-transparent hover:border-b-2 hover:border-[#386641] hover:text-[#386641] text-gray-600 border-b-2 border-transparent'
+                }`}
+              >
+                <IconComponent className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="text-[11px] md:text-xs font-medium text-center whitespace-nowrap">{category.name}</span>
+              </button>
+            );
+          })}
         </div>
         
-        {/* Search Input */}
-        <div className="w-full md:max-w-2xl flex-shrink-0">
-          <div className="relative h-full">
+        {/* Search Input and Price Filter */}
+        <div className="w-full md:max-w-2xl flex-shrink-0 flex gap-2">
+          {/* Price Sort Button */}
+          <button
+            onClick={() => setIsSortedByPrice(!isSortedByPrice)}
+            className={`px-3 py-[11px] rounded-lg border transition-all duration-200 flex items-center justify-center ${
+              isSortedByPrice
+                ? 'bg-[#386641] text-white border-[#386641]'
+                : 'bg-transparent text-gray-600 border-gray-300 hover:border-[#386641] hover:text-[#386641]'
+            }`}
+          >
+            <ArrowDownNarrowWideIcon className="w-4 h-4" />
+          </button>
+
+          {/* Search Input */}
+          <div className="relative h-full flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <Input 
               type="text" 
               placeholder="دەتهەوێت چی بخۆیت؟" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className=" w-full pl-10 pr-4 py-5 md:py-4 rounded-lg border border-gray-300 focus:border-[#386641] focus:outline-none focus:ring-2 focus:ring-[#386641]/10 transition-all text-base placeholder:text-sm"
+              className=" w-full pl-10 pr-4 py-6 md:py-5 rounded-lg border border-gray-300 focus:border-[#386641] focus:outline-none focus:ring-2 focus:ring-[#386641]/10 transition-all text-base placeholder:text-sm"
             />
           </div>
         </div>
