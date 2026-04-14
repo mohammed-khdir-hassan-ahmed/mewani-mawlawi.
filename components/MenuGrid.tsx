@@ -1,6 +1,6 @@
 'use client';
 
-import { Plus } from 'lucide-react';
+import { Plus, Minus, X } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -33,6 +33,7 @@ function formatPrice(price: number): string {
 
 export default function MenuGrid({ items }: MenuGridProps) {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+  const [quantity, setQuantity] = useState(1);
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
@@ -88,28 +89,55 @@ export default function MenuGrid({ items }: MenuGridProps) {
 
       {/* Modal Dialog */}
       {selectedItem && (
-        <Dialog open={true} onOpenChange={() => setSelectedItem(null)}>
-          <DialogContent className="max-h-[95vh] overflow-y-auto">
-            <div className="rounded-lg overflow-hidden mb-2">
+        <Dialog open={true} onOpenChange={() => {
+          setSelectedItem(null);
+          setQuantity(1);
+        }}>
+          <DialogContent className="max-h-[85vh] overflow-y-auto max-w-sm">
+            {/* Image */}
+            <div className="rounded-lg overflow-hidden mb-4 -mt-6 -mx-6">
               <img
                 src={selectedItem.image_url}
                 alt={selectedItem.name}
-                className="w-full h-48 sm:h-80 md:h-96 object-cover"
+                className="w-full h-60 object-cover"
               />
             </div>
-            <DialogHeader>
-              <div className="flex flex-row items-center justify-between gap-2">
-                <DialogTitle className="text-base md:text-xl font-bold flex-1">{selectedItem.name}</DialogTitle>
-                <div className="text-xs md:text-base font-bold text-gray-600 whitespace-nowrap">
-                  {`${formatPrice(selectedItem.price)} هەزار`}
-                </div>
-              </div>
-            </DialogHeader>
-            <div className="flex gap-2 flex-col md:gap-3 md:flex-row">
+
+            {/* Title and Price */}
+            <div className="mb-4 flex items-center justify-between gap-2">
+              <h2 className="text-xl font-bold text-gray-900 flex-1">
+                {selectedItem.name}
+              </h2>
+              <p className="text-2xl font-bold text-[#386641] whitespace-nowrap">
+                {formatPrice(selectedItem.price)} هەزار
+              </p>
+            </div>
+
+            {/* Quantity Selector */}
+            <div className="flex items-center justify-center gap-3 bg-gray-100 rounded-lg p-3 mb-4 w-full mx-auto">
+              <button
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="hover:bg-gray-200 rounded p-1 transition"
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+              <span className="text-lg font-bold w-8 text-center">{quantity}</span>
+              <button
+                onClick={() => setQuantity(quantity + 1)}
+                className="hover:bg-gray-200 rounded p-1 transition"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-2 flex-col">
               <Button 
-                variant="outline" 
-                className="flex-1 text-sm md:text-base bg-[#386641] text-white hover:text-white hover:bg-[#2a4d30] rounded-md p-1"
-                onClick={() => setSelectedItem(null)}
+                className="w-full bg-[#386641] hover:bg-[#2a4d30] text-white rounded-lg py-3 font-semibold"
+                onClick={() => {
+                  setSelectedItem(null);
+                  setQuantity(1);
+                }}
               >
                 داخستن
               </Button>
