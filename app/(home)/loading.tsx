@@ -23,9 +23,6 @@ export default function Loading() {
             className="w-full h-full object-contain"
           />
         </div>
-
-        {/* Loading text */}
-       
       </div>
     </div>
   );
