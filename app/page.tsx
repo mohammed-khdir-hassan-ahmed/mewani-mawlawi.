@@ -6,6 +6,8 @@ import MenuSearch from '@/components/MenuSearch';
 import ImageKitWrapper from '@/components/ImageKitWrapper';
 import Celebration from '@/components/Celebration';
 import ScrollButtons from '@/components/ScrollButtons';
+import Navbar from '@/components/Navbar';
+import Loading from './loading';
 
 const sql = neon(process.env.DATABASE_URL!);
 const db = drizzle(sql);
@@ -60,13 +62,18 @@ async function MenuList() {
 
 export default async function Home() {
   return (
-    <ImageKitWrapper>
-      <Celebration />
-      <div id="menu-section" className="p-3 md:p-8 pt-0">
-        <MenuList />
-      </div>
-      <ScrollButtons />
-    </ImageKitWrapper>
+    <>
+      <Navbar />
+      <Suspense fallback={<Loading />}>
+        <ImageKitWrapper>
+          <Celebration />
+          <div id="menu-section" className="p-3 md:p-8 pt-0">
+            <MenuList />
+          </div>
+          <ScrollButtons />
+        </ImageKitWrapper>
+      </Suspense>
+    </>
   );
 }
 
