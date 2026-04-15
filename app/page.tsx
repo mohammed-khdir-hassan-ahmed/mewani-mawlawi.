@@ -28,7 +28,7 @@ function sleep(ms: number): Promise<void> {
 async function MenuList() {
   try {
     // Add 20 second delay to ensure loading shows long enough
-    await sleep(20000);
+    await sleep(1000);
     
     // Fetch with Next.js cache
     // revalidate: 3600 means ISR - regenerate every hour
@@ -64,15 +64,17 @@ export default async function Home() {
   return (
     <>
       <Navbar />
-      <Suspense fallback={<Loading />}>
-        <ImageKitWrapper>
-          <Celebration />
-          <div id="menu-section" className="p-3 md:p-8 pt-0">
+      <ImageKitWrapper>
+        <div id="menu-section" className="p-3 md:p-8 pt-0">
+          <Suspense fallback={<Loading />}>
             <MenuList />
-          </div>
-          <ScrollButtons />
-        </ImageKitWrapper>
-      </Suspense>
+          </Suspense>
+        </div>
+        <Suspense>
+          <Celebration />
+        </Suspense>
+        <ScrollButtons />
+      </ImageKitWrapper>
     </>
   );
 }
