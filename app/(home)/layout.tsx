@@ -1,6 +1,4 @@
-import { Suspense } from "react";
 import Navbar from "@/components/Navbar";
-import Loading from "@/app/loading";
 
 export default function HomeLayout({
   children,
@@ -10,9 +8,7 @@ export default function HomeLayout({
   return (
     <>
       <Navbar />
-      <Suspense fallback={<Loading />}>
-        {children}
-      </Suspense>
+      {children}
     </>
   );
 }

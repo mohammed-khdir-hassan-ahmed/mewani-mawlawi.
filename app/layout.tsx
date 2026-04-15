@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { fontSirwan } from "../public/fonts";
 import "./globals.css";
-import Loading from "./loading";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,9 +30,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${fontSirwan.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sirwan">
-        <Suspense fallback={<Loading />}>
-          {children}
-        </Suspense>
+        {children}
       </body>
     </html>
   );

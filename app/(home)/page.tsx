@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
 import { menuitem } from '@/src/db/schema';
@@ -5,6 +6,7 @@ import MenuSearch from '@/components/MenuSearch';
 import ImageKitWrapper from '@/components/ImageKitWrapper';
 import Celebration from '@/components/Celebration';
 import ScrollButtons from '@/components/ScrollButtons';
+import Loading from '../loading';
 
 const sql = neon(process.env.DATABASE_URL!);
 const db = drizzle(sql);
@@ -62,7 +64,9 @@ export default async function Home() {
     <ImageKitWrapper>
       <Celebration />
       <div id="menu-section" className="p-3 md:p-8 pt-0">
-        <MenuList />
+        <Suspense fallback={<Loading />}>
+          <MenuList />
+        </Suspense>
       </div>
       <ScrollButtons />
     </ImageKitWrapper>
