@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import Loading from "@/app/loading";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard - miwani-mawlawi",
@@ -10,5 +12,9 @@ export default function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return children;
+  return (
+    <Suspense fallback={<Loading />}>
+      {children}
+    </Suspense>
+  );
 }
