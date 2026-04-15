@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Utensils, Pizza, Coffee, Salad, Egg, ArrowDownNarrowWideIcon, Home } from 'lucide-react';
+import { Search, Utensils, Pizza, Coffee, Salad, Egg, ArrowDownNarrowWideIcon, Home, Beef, BottleWine } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import MenuGrid from '@/components/MenuGrid';
 
@@ -25,8 +25,8 @@ export default function MenuSearch({ items }: MenuSearchProps) {
   const categories = [
     { id: 'all', name: ' هەموو خواردنەکان', icon: Home },
     { id: 'main', name: 'خواردنە سەرەکیەکان', icon: Utensils },
-    { id: 'pizza', name: 'برژاو', icon: Pizza },
-    { id: 'drinks', name: 'خواردنەوە', icon: Coffee },
+    { id: 'pizza', name: 'برژاو', icon: Beef },
+    { id: 'drinks', name: 'خواردنەوە', icon: BottleWine },
     { id: 'appetizers', name: 'مقەبیلات', icon: Salad },
     { id: 'breakfast', name: 'بەیانیان', icon: Egg },
   ];
@@ -74,7 +74,9 @@ export default function MenuSearch({ items }: MenuSearchProps) {
                 style={{ scrollSnapAlign: 'center' }}
               >
                 <IconComponent className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="text-[11px] md:text-xs font-medium text-center whitespace-nowrap">{category.name}</span>
+                <span className={`text-[11px] md:text-xs text-center whitespace-nowrap ${
+                  isSelected ? 'font-bold' : 'font-medium'
+                }`}>{category.name}</span>
               </button>
             );
           })}
