@@ -85,6 +85,28 @@ export default function Loading() {
             className="w-full h-full object-contain"
           />
         </div>
+
+        {/* Network Status Display */}
+        <div className="flex flex-col items-center gap-3 text-center">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-800">Loading...</h2>
+
+          {/* Speed Info */}
+          <div
+            className={`px-4 py-2 rounded-lg text-sm sm:text-base font-medium ${
+              networkStatus.isLow
+                ? 'bg-yellow-100 text-yellow-800 border border-yellow-300'
+                : 'bg-green-100 text-green-800 border border-green-300'
+            }`}
+          >
+            {networkStatus.isLow ? '⚠️ Low Connection' : '✓ Good Connection'}
+          </div>
+
+          {/* Connection Details */}
+          <div className="text-xs sm:text-sm text-gray-600 space-y-1">
+            <p>Speed: {networkStatus.speed}</p>
+            <p>Type: {networkStatus.type}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
