@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,13 +30,19 @@ export default function Navbar() {
           />
         </div>
 
-        {/* Right side - Location Button */}
-        <Button
-          className="w-10 h-10 md:w-10 md:h-10 bg-[#386641] hover:bg-[#2a4d30] text-white rounded-md flex items-center justify-center flex-shrink-0"
-          onClick={() => setIsOpen(true)}
-        >
-          <MapPin className="w-6 h-6 md:w-5 md:h-5" />
-        </Button>
+        {/* Right side - Buttons */}
+        <div className="flex gap-2 items-center">
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+          
+          {/* Location Button */}
+          <Button
+            className="w-10 h-10 md:w-10 md:h-10 bg-[#386641] hover:bg-[#2a4d30] text-white rounded-md flex items-center justify-center flex-shrink-0"
+            onClick={() => setIsOpen(true)}
+          >
+            <MapPin className="w-6 h-6 md:w-5 md:h-5" />
+          </Button>
+        </div>
       </nav>
 
       {/* Modal */}

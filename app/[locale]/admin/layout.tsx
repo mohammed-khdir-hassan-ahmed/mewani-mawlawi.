@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import Loading from "@/app/loading";
+import Loading from "../loading";
 
 export const metadata: Metadata = {
-  title: "Login - miwani-mawlawi",
-  description: "Admin login",
+  title: "Admin Dashboard - miwani-mawlawi",
+  description: "Admin dashboard",
 };
 
-export default function AuthLayout({
+export default function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

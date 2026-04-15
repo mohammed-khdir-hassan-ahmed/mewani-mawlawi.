@@ -22,14 +22,8 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-interface MenuItem {
-  id: number;
-  name: string;
-  price: number;
-  image_url: string;
-  category?: string;
-}
+import { useLocale } from 'next-intl';
+import { type MenuItem } from '@/lib/db';
 
 interface OptimizedMenuItemProps {
   item: MenuItem;
@@ -48,8 +42,22 @@ export default function OptimizedMenuItem({
   priority = false,
   index = 0,
 }: OptimizedMenuItemProps) {
+  const locale = useLocale();
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
   const [imageLoaded, setImageLoaded] = useState(false);
+  
+  // Get the appropriate name based on locale with proper fallbacks
+  const getDisplayName = () => {
+    if (locale === 'ku') {
+      // For Kurdish: prefer name_ckb, then legacy name, then English
+      return item.name_ckb || item.name || item.name_en || 'Menu Item';
+    } else {
+      // For English: prefer name_en, then legacy name, then Kurdish
+      return item.name_en || item.name || item.name_ckb || 'Menu Item';
+    }
+  };
+  
+  const displayName = getDisplayName();
   
   // Alternate animation direction: even items from left, odd from right
   const isFromLeft = index % 2 === 0;
@@ -91,7 +99,7 @@ export default function OptimizedMenuItem({
         <Image
           loader={imageKitLoader}
           src={item.image_url}
-          alt={item.name}
+          alt={displayName}
           width={300}
           height={200}
           sizes={getResponsiveSizes('thumbnail')}
@@ -111,7 +119,7 @@ export default function OptimizedMenuItem({
           onLoadingComplete={() => setImageLoaded(true)}
           onError={(e) => {
             // Fallback on error
-            console.error(`Failed to load image for ${item.name}`);
+            console.error(`Failed to load image for ${displayName}`);
           }}
         />
       </div>
@@ -121,10 +129,10 @@ export default function OptimizedMenuItem({
         <div className="flex items-start gap-3">
           <div className="flex flex-col justify-center flex-1 min-w-0">
             <div className="font-bold text-sm md:text-base line-clamp-2">
-              {item.name}
+              {displayName}
             </div>
             <div className="text-xs font-bold text-gray-600 mt-1">
-              {formatPrice(item.price)} دینار
+              {formatPrice(item.price)} {locale === 'en' ? 'IQD' : 'دینار'}
             </div>
           </div>
           <Button

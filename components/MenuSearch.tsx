@@ -4,20 +4,36 @@ import { useState, useTransition, useMemo } from 'react';
 import { Search, Utensils, Pizza, Coffee, Salad, Egg, ArrowDownNarrowWideIcon, Home, Beef, BottleWine } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import MenuGrid from '@/components/MenuGrid';
-
-interface MenuItem {
-  id: number;
-  name: string;
-  price: number;
-  image_url: string;
-  category?: string;
-}
+import { useLocale } from 'next-intl';
+import { type MenuItem } from '@/lib/db';
 
 interface MenuSearchProps {
   items: MenuItem[];
 }
 
+const CATEGORY_ALIASES: Record<string, string[]> = {
+  main: ['main', 'خواردنە سەرەکیەکان'],
+  pizza: ['pizza', 'برژاو'],
+  drinks: ['drinks', 'خواردنەوە'],
+  appetizers: ['appetizers', 'مقەبیلات'],
+  breakfast: ['breakfast', 'بەیانیان'],
+};
+
+function normalizeCategory(value?: string | null): string {
+  if (!value) return 'main';
+
+  const normalized = value.trim().toLowerCase();
+  for (const [key, aliases] of Object.entries(CATEGORY_ALIASES)) {
+    if (aliases.some((alias) => alias.toLowerCase() === normalized)) {
+      return key;
+    }
+  }
+
+  return value;
+}
+
 export default function MenuSearch({ items }: MenuSearchProps) {
+  const locale = useLocale();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSortedByPrice, setIsSortedByPrice] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -25,29 +41,43 @@ export default function MenuSearch({ items }: MenuSearchProps) {
   // useTransition for non-blocking category filtering
   // Shows loading state without blocking user input
   const [isPending, startTransition] = useTransition();
+  
+  const getDisplayName = (item: MenuItem) => {
+    // Show language-specific name with proper fallbacks
+    if (locale === 'ku') {
+      // For Kurdish: prefer name_ckb, then legacy name, then English
+      return item.name_ckb || item.name || item.name_en || 'Menu Item';
+    } else {
+      // For English: prefer name_en, then legacy name, then Kurdish
+      return item.name_en || item.name || item.name_ckb || 'Menu Item';
+    }
+  };
 
   const categories = [
-    { id: 'all', name: ' هەموو خواردنەکان', icon: Home },
-    { id: 'main', name: 'خواردنە سەرەکیەکان', icon: Utensils },
-    { id: 'pizza', name: 'برژاو', icon: Beef },
-    { id: 'drinks', name: 'خواردنەوە', icon: BottleWine },
-    { id: 'appetizers', name: 'مقەبیلات', icon: Salad },
-    { id: 'breakfast', name: 'بەیانیان', icon: Egg },
+    { id: 'all', name: locale === 'en' ? 'All Items' : ' هەموو خواردنەکان', icon: Home },
+    { id: 'main', name: locale === 'en' ? 'Main Dishes' : 'خواردنە سەرەکیەکان', icon: Utensils },
+    { id: 'pizza', name: locale === 'en' ? 'Pizza' : 'برژاو', icon: Beef },
+    { id: 'drinks', name: locale === 'en' ? 'Drinks' : 'خواردنەوە', icon: BottleWine },
+    { id: 'appetizers', name: locale === 'en' ? 'Appetizers' : 'مقەبیلات', icon: Salad },
+    { id: 'breakfast', name: locale === 'en' ? 'Breakfast' : 'بەیانیان', icon: Egg },
   ];
 
   const categoryMap: { [key: string]: string } = {
-    'main': 'خواردنە سەرەکیەکان',
-    'pizza': 'برژاو',
-    'drinks': 'خواردنەوە',
-    'appetizers': 'مقەبیلات',
-    'breakfast': 'بەیانیان',
+    'main': locale === 'en' ? 'Main Dishes' : 'خواردنە سەرەکیەکان',
+    'pizza': locale === 'en' ? 'Pizza' : 'برژاو',
+    'drinks': locale === 'en' ? 'Drinks' : 'خواردنەوە',
+    'appetizers': locale === 'en' ? 'Appetizers' : 'مقەبیلات',
+    'breakfast': locale === 'en' ? 'Breakfast' : 'بەیانیان',
   };
 
   // Memoized filtering to prevent unnecessary re-renders
   const filteredItems = useMemo(() => {
     let result = items.filter(item => {
-      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+      const displayName = getDisplayName(item);
+      const matchesSearch = displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           (item.name_en?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+                           (item.name_ckb?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
+      const matchesCategory = selectedCategory === 'all' || normalizeCategory(item.category) === selectedCategory;
       return matchesSearch && matchesCategory;
     });
 
@@ -56,14 +86,14 @@ export default function MenuSearch({ items }: MenuSearchProps) {
     }
 
     return result;
-  }, [items, searchQuery, selectedCategory, isSortedByPrice]);
+  }, [items, searchQuery, selectedCategory, isSortedByPrice, locale]);
 
   // Group items by category when viewing "all"
   const groupedItems: { [key: string]: MenuItem[] } = useMemo(() => {
     const grouped: { [key: string]: MenuItem[] } = {};
     if (selectedCategory === 'all') {
       filteredItems.forEach(item => {
-        const cat = item.category || 'main';
+        const cat = normalizeCategory(item.category);
         if (!grouped[cat]) {
           grouped[cat] = [];
         }
@@ -139,14 +169,29 @@ export default function MenuSearch({ items }: MenuSearchProps) {
 
           {/* Search Input */}
           <div className="relative h-full flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <Input 
-              type="text" 
-              placeholder="دەتهەوێت چی بخۆیت؟" 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-6 md:py-5 rounded-lg border border-gray-300 focus:border-[#386641] focus:outline-none focus:ring-2 focus:ring-[#386641]/10 transition-all text-base placeholder:text-sm"
-            />
+            {locale === 'en' ? (
+              <>
+                <Input 
+                  type="text" 
+                  placeholder="What would you like to eat?"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pr-10 pl-4 py-6 md:py-5 rounded-lg border border-gray-300 focus:border-[#386641] focus:outline-none focus:ring-2 focus:ring-[#386641]/10 transition-all text-base placeholder:text-sm"
+                />
+                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              </>
+            ) : (
+              <>
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Input 
+                  type="text" 
+                  placeholder="دەتهەوێت چی بخۆیت؟"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-6 md:py-5 rounded-lg border border-gray-300 focus:border-[#386641] focus:outline-none focus:ring-2 focus:ring-[#386641]/10 transition-all text-base placeholder:text-sm"
+                />
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -154,7 +199,7 @@ export default function MenuSearch({ items }: MenuSearchProps) {
       {/* Loading indicator for category transitions */}
       {isPending && (
         <div className="mt-4 text-center text-sm text-gray-500">
-          <p>جاری کردندە...</p>
+          <p>{locale === 'en' ? 'Filtering...' : 'جاری کردندە...'}</p>
         </div>
       )}
 
@@ -191,7 +236,7 @@ export default function MenuSearch({ items }: MenuSearchProps) {
           <MenuGrid items={filteredItems} />
         ) : (
           <div className="text-center py-8 text-gray-500">
-            <p>خواردنێک نەدۆزرایەوە</p>
+            <p>{locale === 'en' ? 'No items found' : 'خواردنێک نەدۆزرایەوە'}</p>
           </div>
         )}
       </div>

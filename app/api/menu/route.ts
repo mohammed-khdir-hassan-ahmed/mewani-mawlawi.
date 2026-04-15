@@ -20,15 +20,23 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, price, image_url, category } = body;
+    let { name_en, name_ckb, price, image_url, category } = body;
 
-    console.log('📥 POST /api/menu received:', { name, price, image_url: image_url?.substring(0, 50) + '...', category });
+    console.log('📥 POST /api/menu received:', { name_en, name_ckb, price, image_url: image_url?.substring(0, 50) + '...', category });
+
+    // Auto-fill missing language if only one is provided
+    if (!name_en && name_ckb) {
+      name_en = name_ckb;
+    }
+    if (!name_ckb && name_en) {
+      name_ckb = name_en;
+    }
 
     // Validate input
-    if (!name || !price || !image_url) {
+    if (!name_en || !name_ckb || !price || !image_url) {
       console.error('❌ Missing required fields');
       return Response.json(
-        { error: `Missing required fields. Received: ${JSON.stringify({ name: !!name, price: !!price, image_url: !!image_url })}` },
+        { error: `Missing required fields. Received: ${JSON.stringify({ name_en: !!name_en, name_ckb: !!name_ckb, price: !!price, image_url: !!image_url })}` },
         { status: 400 }
       );
     }
@@ -38,7 +46,9 @@ export async function POST(request: Request) {
     const newItem = await db
       .insert(menuitem)
       .values({
-        name,
+        name: name_en, // Populate legacy 'name' field with English name for compatibility
+        name_en,
+        name_ckb,
         price: parseInt(price),
         image_url,
         category: category || 'main',

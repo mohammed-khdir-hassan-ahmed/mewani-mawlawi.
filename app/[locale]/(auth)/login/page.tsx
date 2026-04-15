@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { Home,LogIn } from 'lucide-react';
+import { Home, LogIn } from 'lucide-react';
+import { useLocale } from 'next-intl';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const locale = useLocale();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +40,7 @@ export default function LoginPage() {
         // Set auth token in localStorage as backup for client-side checks
         localStorage.setItem('adminAuth', 'true');
         console.log('✅ Login successful, redirecting...');
-        router.push('/admin/dashboard');
+        router.push(`/${locale}/admin/dashboard`);
       } else {
         const errorMsg = data.message || 'ناویی بەکارهێنەر یان وشەی نهێنی هەڵەیە';
         setError(errorMsg);
@@ -56,7 +58,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-[#386641] p-4">
       {/* Home Button */}
       <button
-        onClick={() => router.push('/')}
+        onClick={() => router.push(`/${locale}`)}
         className="absolute top-4 left-4 bg-green-600 text-white hover:bg-green-700 rounded-full p-3 shadow-lg transition"
       >
         <Home className="w-5 h-5" />

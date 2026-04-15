@@ -3,17 +3,10 @@ import { neon } from '@neondatabase/serverless';
 import { menuitem } from '@/src/db/schema';
 import { eq } from 'drizzle-orm';
 import { unstable_cache } from 'next/cache';
+import { type MenuItem } from '@/lib/db';
 
 const sql = neon(process.env.DATABASE_URL!);
 const db = drizzle(sql);
-
-interface MenuItem {
-  id: number;
-  name: string;
-  price: number;
-  image_url: string;
-  category: string;
-}
 
 /**
  * GET /api/menu/by-category/[category]

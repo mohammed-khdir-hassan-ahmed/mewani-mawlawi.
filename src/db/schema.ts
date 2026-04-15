@@ -3,8 +3,11 @@ import { integer, pgTable, varchar, index } from 'drizzle-orm/pg-core';
 export const menuitem = pgTable('menuitem', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar({ length: 255 }).notNull(),
+  name_en: varchar('name_en', { length: 255 }),
+  name_ckb: varchar('name_ckb', { length: 255 }),
   price: integer().notNull(),
   image_url: varchar({ length: 255 }).notNull(),
+  image_file_name: varchar({ length: 255 }),
   category: varchar({ length: 50 }).notNull().default('main'),
 }, (table) => [
   // Index for category filtering - CRITICAL for performance

@@ -15,12 +15,12 @@ export async function PUT(
     const { id: paramId } = await params;
     const id = parseInt(paramId);
     const body = await request.json();
-    const { name, price, image_url, category } = body;
+    const { name_en, name_ckb, price, image_url, category } = body;
 
     // Validate input
-    if (!name || !price) {
+    if (!name_en || !name_ckb || !price) {
       return Response.json(
-        { error: 'Missing required fields: name, price' },
+        { error: 'Missing required fields: name_en, name_ckb, price' },
         { status: 400 }
       );
     }
@@ -36,7 +36,9 @@ export async function PUT(
     const updatedItem = await db
       .update(menuitem)
       .set({
-        name,
+        name: name_en, // Keep legacy 'name' field in sync with English name
+        name_en,
+        name_ckb,
         price: parseInt(price),
         image_url: image_url || currentItem[0].image_url, // Use new image or keep old one
         category: category || currentItem[0].category, // Use new category or keep old one

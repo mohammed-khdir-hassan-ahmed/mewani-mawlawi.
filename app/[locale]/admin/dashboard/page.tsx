@@ -15,22 +15,20 @@ import { Plus, LogOut, Edit, Trash2, Upload } from 'lucide-react';
 import Image from 'next/image';
 import { Image as IKImage, ImageKitProvider } from '@imagekit/react';
 import { getAdminImageUrl } from '@/lib/imagekit';
-
-interface MenuItem {
-  id?: number;
-  name: string;
-  price: number;
-  image_url: string;
-  category?: string;
-}
+import { useLocale } from 'next-intl';
+import DashboardLanguageSwitcher from '@/components/DashboardLanguageSwitcher';
+import { type MenuItem } from '@/lib/db';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const locale = useLocale();
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<MenuItem[]>([]);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
+    name_en: '',
+    name_ckb: '',
     price: '',
     image_url: '',
     image_file_name: '',
@@ -48,13 +46,13 @@ export default function DashboardPage() {
   useEffect(() => {
     const isAuth = localStorage.getItem('adminAuth');
     if (!isAuth) {
-      router.push('/login');
+      router.push(`/${locale}/login`);
     } else {
       setAuthenticated(true);
       fetchItems();
     }
     setLoading(false);
-  }, [router]);
+  }, [router, locale]);
 
   // Fetch items from database
   const fetchItems = async () => {
@@ -76,7 +74,7 @@ export default function DashboardPage() {
     }
     
     localStorage.removeItem('adminAuth');
-    router.push('/login');
+    router.push(`/${locale}/login`);
   };
 
   // Handle form input
@@ -144,8 +142,8 @@ export default function DashboardPage() {
     setMessage('');
 
     try {
-      if (!formData.name || !formData.price) {
-        setMessage('براکو ناو و نرخ پڕ بکە');
+      if (!formData.name_en || !formData.name_ckb || !formData.price) {
+        setMessage('براکو ناو (ئینگلێزی و کوردی) و نرخ پڕ بکە');
         setMessageType('error');
         setSubmitting(false);
         return;
@@ -158,45 +156,42 @@ export default function DashboardPage() {
         return;
       }
 
-      console.log('📤 Submitting form with data:', {
-        name: formData.name,
-        price: formData.price,
-        image_url: formData.image_url,
-      });
-
       const response = await fetch('/api/menu', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: formData.name,
+          name_en: formData.name_en,
+          name_ckb: formData.name_ckb,
           price: parseInt(formData.price),
           image_url: formData.image_url,
           category: formData.category,
         }),
       });
 
-      console.log('📥 Response status:', response.status);
-      const responseData = await response.json();
-      console.log('📥 Response data:', responseData);
-
       if (response.ok) {
         setMessage('خواردن بسەرکەوتوویی زیادکرا!');
         setMessageType('success');
-        setFormData({ name: '', price: '', image_url: '', image_file_name: '', category: '' });
-        fetchItems(); // Refresh the list
+        setFormData({ 
+          name_en: '', 
+          name_ckb: '', 
+          price: '', 
+          image_url: '', 
+          image_file_name: '', 
+          category: '' 
+        });
+        setShowAddModal(false);
+        fetchItems();
       } else {
-        const errorMsg = responseData?.error || 'خواردن زیاد نەکرا';
-        setMessage(`هەڵە: ${errorMsg}`);
+        const responseData = await response.json();
+        setMessage(`هەڵە: ${responseData?.error || 'خواردن زیاد نەکرا'}`);
         setMessageType('error');
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       setMessage(`هەڵە: ${errorMessage}`);
       setMessageType('error');
-      // eslint-disable-next-line no-console
-      console.error('Submit Error:', error);
     }
     setSubmitting(false);
   };
@@ -235,7 +230,8 @@ export default function DashboardPage() {
   const handleEditClick = (item: MenuItem) => {
     setEditingId(item.id || null);
     setFormData({
-      name: item.name,
+      name_en: item.name_en || '',
+      name_ckb: item.name_ckb || '',
       price: item.price.toString(),
       image_url: item.image_url,
       image_file_name: '',
@@ -259,7 +255,8 @@ export default function DashboardPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: formData.name,
+          name_en: formData.name_en,
+          name_ckb: formData.name_ckb,
           price: parseInt(formData.price),
           image_url: formData.image_url,
           category: formData.category,
@@ -269,7 +266,14 @@ export default function DashboardPage() {
       if (response.ok) {
         setMessage('خواردن نوێکراوە!');
         setMessageType('success');
-        setFormData({ name: '', price: '', image_url: '', image_file_name: '', category: '' });
+        setFormData({ 
+          name_en: '', 
+          name_ckb: '', 
+          price: '', 
+          image_url: '', 
+          image_file_name: '', 
+          category: '' 
+        });
         setShowEditModal(false);
         setEditingId(null);
         fetchItems();
@@ -295,7 +299,7 @@ export default function DashboardPage() {
 
   return (
     <ImageKitProvider urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || ''}>
-      <div className="min-h-screen bg-[#386641]">
+      <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="bg-white shadow-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
@@ -311,234 +315,152 @@ export default function DashboardPage() {
             </div>
             <h1 className="text-2xl md:text-3xl font-bold text-[#386641]">داشبۆردی ئەدمین</h1>
           </div>
-          <Button
-            onClick={handleLogout}
-            className="bg-[#386641] hover:bg-green-700 text-white rounded-lg px-4 py-2"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            چوونەژوورەوە
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={handleLogout}
+              className="bg-[#386641] hover:bg-green-700 text-white rounded-lg px-4 py-2"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              چوونەژوورەوە
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Add Item Form */}
-          <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">زیادکردنی خواردنی نوێ   </h2>
+      <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-bold text-white">خواردنەکان ({items.length})</h2>
+          <Button
+            onClick={() => setShowAddModal(true)}
+            className="bg-[#386641] hover:bg-green-700 text-white rounded-lg px-6 py-2 font-bold flex items-center gap-2"
+          >
+            <Plus className="w-5 h-5" />
+            زیادکردنی خواردنی نوێ
+          </Button>
+        </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Name */}
-              <div>
-                <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
-                  ناوی خواردن
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  placeholder="ناوی خواردن" 
-                  required
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
-                />
-              </div>
-
-              {/* Price */}
-              <div>
-                <label htmlFor="price" className="block text-sm font-semibold text-gray-700 mb-2">
-                  نرخ
-                </label>
-                <input
-                  id="price"
-                  type="number"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleInputChange}
-                  placeholder="نرخی خواردن"
-                  required
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
-                />
-              </div>
-
-              {/* Category */}
-              <div>
-                <label htmlFor="category" className="block text-sm font-semibold text-gray-700 mb-2">
-                  بەشەکان
-                </label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
-                >
-                  <option value="">هەڵبژاردنی بەشەکان</option>
-                  <option value="main">خواردنە سەرەکیەکان</option>
-                  <option value="pizza">برژاو</option>
-                  <option value="drinks">خواردنەوە</option>
-                  <option value="appetizers">مقەبیلات</option>
-                  <option value="breakfast">بەیانیان</option>
-                </select>
-              </div>
-
-              {/* Image Upload */}
-              <div>
-                <label htmlFor="image_file" className="block text-sm font-semibold text-gray-700 mb-2">
-                  وێنەی خواردن
-                </label>
-                <div className="relative">
-                  <input
-                    id="image_file"
-                    type="file"
-                    name="image_file"
-                    onChange={handleInputChange}
-                    accept="image/*"
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  />
-                  <div className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg bg-white text-gray-900 cursor-pointer hover:border-[#386641] transition flex items-center gap-2 justify-center font-semibold">
-                    <Upload className="w-4 h-4 text-gray-500" />
-                    {formData.image_file_name ? formData.image_file_name : 'هەڵبژاردنی ڕەسمی خواردن'}
-                  </div>
-                </div>
-              </div>
-
-              {/* Image Preview */}
-              {formData.image_url && (
-                <div className="mt-4">
-                  <p className="text-sm font-semibold text-gray-700 mb-2">Preview</p>
-                  <IKImage
-                    src={getAdminImageUrl(formData.image_url)}
-                    alt="Preview"
-                    width={400}
-                    height={192}
-                    className="w-full h-48 object-cover rounded-lg"
-                  />
-                </div>
-              )}
-
-              {/* Message */}
-              {message && (
-                <div className={`p-3 rounded-lg text-sm font-semibold ${messageType === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                  {message}
-                </div>
-              )}
-
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                disabled={submitting}
-                className="w-full bg-[#386641] hover:bg-[#2a4d30] text-white rounded-lg py-3 font-bold text-sm transition-all"
-              >
-                <Plus className="w-3 h-3 " />
-                {submitting ? 'زیادکردنی خواردن...' : ' زیادکردنی خواردن'}
-              </Button>
-            </form>
-          </div>
-
-          {/* Current Items List */}
-          <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">خواردنەکان ({items.length})</h2>
-
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {items.length === 0 ? (
-                <p className="text-gray-500 text-center py-8"> هیچ خواردنێک بەردەست نییە!</p>
-              ) : (
-                items.map((item, idx) => (
-                  <div key={item.id || idx} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 justify-between">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <IKImage
-                        src={getAdminImageUrl(item.image_url)}
-                        alt={item.name}
-                        width={64}
-                        height={64}
-                        className="w-16 h-16 object-cover rounded-lg"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-bold text-gray-900 truncate">{item.name}</p>
-                        <p className="text-sm text-[#386641] font-semibold">{item.price} دینار</p>
-                        {item.category && (
-                          <p className="text-xs text-gray-600">قۆناغ: {item.category}</p>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEditClick(item)}
-                        className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-2 transition"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="bg-red-500 hover:bg-red-600 text-white rounded-lg p-2 transition"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
+        {/* Items Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {items.length === 0 ? (
+            <div className="col-span-full text-center py-12 bg-white rounded-xl">
+              <p className="text-gray-500 text-lg">هیچ خواردنێک بەردەست نییە!</p>
             </div>
-          </div>
+          ) : (
+            items.map((item, idx) => (
+              <div key={item.id || idx} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div className="relative">
+                  <IKImage
+                    src={getAdminImageUrl(item.image_url)}
+                    alt={item.name_en}
+                    width={300}
+                    height={200}
+                    className="w-full h-48 object-cover"
+                  />
+                </div>
+                <div className="p-4">
+                  <p className="font-bold text-lg text-gray-900">{item.name_en}</p>
+                  <p className="font-bold text-base text-gray-700 mb-2">{item.name_ckb}</p>
+                  <p className="text-sm text-[#386641] font-bold mb-3">{item.price} دینار</p>
+                  {item.category && (
+                    <p className="text-xs text-gray-500 mb-3">قۆناغ: {item.category}</p>
+                  )}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEditClick(item)}
+                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-2 transition flex items-center justify-center gap-2 font-semibold"
+                    >
+                      <Edit className="w-4 h-4" />
+                      گۆڕین
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-lg p-2 transition flex items-center justify-center gap-2 font-semibold"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      سڕینەوە
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
-      {/* Edit Dialog */}
-      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent className="sm:max-w-[425px]">
+      {/* Add Item Modal */}
+      <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-          
-            <DialogDescription className="text-center">
-              زانیاری خواردنەکە بگۆڕە
-            </DialogDescription>
+            <DialogTitle className="text-2xl font-bold text-center">زیادکردنی خواردنی نوێ</DialogTitle>
+           
           </DialogHeader>
 
-          <form onSubmit={handleEditSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* English Name */}
             <div>
-              <label htmlFor="edit-name" className="block text-sm font-semibold text-gray-700 mb-2">
-                ناوی خواردن
+              <label htmlFor="name_en" className="block text-sm font-semibold text-gray-700 mb-2">
+                ناوی خواردنەی (English) *
               </label>
               <input
-                id="edit-name"
+                id="name_en"
                 type="text"
-                name="name"
-                value={formData.name}
+                name="name_en"
+                value={formData.name_en}
                 onChange={handleInputChange}
+                placeholder="  Food Name"
                 required
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600"
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
               />
             </div>
 
+            {/* Kurdish Name */}
             <div>
-              <label htmlFor="edit-price" className="block text-sm font-semibold text-gray-700 mb-2">
-                نرخ (هەزار)
+              <label htmlFor="name_ckb" className="block text-sm font-semibold text-gray-700 mb-2">
+                ناوی خواردنەی (Kurdish) *
               </label>
               <input
-                id="edit-price"
+                id="name_ckb"
+                type="text"
+                name="name_ckb"
+                value={formData.name_ckb}
+                onChange={handleInputChange}
+                placeholder="ناوی خواردنەی"
+                required
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
+              />
+            </div>
+
+            {/* Price */}
+            <div>
+              <label htmlFor="price" className="block text-sm font-semibold text-gray-700 mb-2">
+                نرخ 
+              </label>
+              <input
+                id="price"
                 type="number"
                 name="price"
                 value={formData.price}
                 onChange={handleInputChange}
+                placeholder="5000"
                 required
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600"
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
               />
             </div>
 
+            {/* Category */}
             <div>
-              <label htmlFor="edit-category" className="block text-sm font-semibold text-gray-700 mb-2">
-                قۆناغ
+              <label htmlFor="category" className="block text-sm font-semibold text-gray-700 mb-2">
+                بەشەکان
               </label>
               <select
-                id="edit-category"
+                id="category"
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600 text-gray-900"
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
               >
-                <option value="">هەڵبژاردنی قۆناغ</option>
+                <option value="">هەڵبژاردنی بەشەکان</option>
                 <option value="main">خواردنە سەرەکیەکان</option>
                 <option value="pizza">برژاو</option>
                 <option value="drinks">خواردنەوە</option>
@@ -547,8 +469,159 @@ export default function DashboardPage() {
               </select>
             </div>
 
+            {/* Image Upload */}
             <div>
-              <label htmlFor="edit-image" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                 وێنە
+              </label>
+              <div className="relative">
+                <input
+                  id="image_file"
+                  type="file"
+                  name="image_file"
+                  onChange={handleInputChange}
+                  accept="image/*"
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <div className="w-full px-4 py-3 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 text-[#386641] cursor-pointer transition flex items-center gap-2 justify-center font-bold">
+                  <Upload className="w-5 h-5" />
+                  {formData.image_file_name ? formData.image_file_name : 'کلیک یکە بۆ بارکردن'}
+                </div>
+              </div>
+            </div>
+
+            {/* Image Preview */}
+            {formData.image_url && (
+              <div className="mt-4">
+                <IKImage
+                  src={getAdminImageUrl(formData.image_url)}
+                  alt="Preview"
+                  width={400}
+                  height={200}
+                  className="w-full h-40 object-cover rounded-lg"
+                />
+              </div>
+            )}
+
+            {/* Message */}
+            {message && (
+              <div className={`p-3 rounded-lg text-sm font-semibold ${messageType === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                {message}
+              </div>
+            )}
+
+            <DialogFooter className="gap-2">
+              <Button
+                type="button"
+                onClick={() => {
+                  setShowAddModal(false);
+                  setFormData({ 
+                    name_en: '', 
+                    name_ckb: '', 
+                    price: '', 
+                    image_url: '', 
+                    image_file_name: '', 
+                    category: '' 
+                  });
+                  setMessage('');
+                }}
+                className="bg-gray-500 hover:bg-gray-600 text-white"
+              >
+                هەڵوەشاندنەوە
+              </Button>
+              <Button
+                type="submit"
+                disabled={submitting}
+                className="bg-[#386641] hover:bg-[#2a4d30] text-white"
+              >
+                {submitting ? 'زیادکردن...' : 'زیادکردن'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Dialog */}
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-center">گۆڕینی زانیاری خواردن</DialogTitle>
+      
+          </DialogHeader>
+
+          <form onSubmit={handleEditSubmit} className="space-y-4">
+            {/* English Name */}
+            <div>
+              <label htmlFor="edit-name_en" className="block text-sm font-semibold text-gray-700 mb-2">
+                ناوی خواردنەی (English)
+              </label>
+              <input
+                id="edit-name_en"
+                type="text"
+                name="name_en"
+                value={formData.name_en}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
+              />
+            </div>
+
+            {/* Kurdish Name */}
+            <div>
+              <label htmlFor="edit-name_ckb" className="block text-sm font-semibold text-gray-700 mb-2">
+                ناوی خواردنەی (Kurdish)
+              </label>
+              <input
+                id="edit-name_ckb"
+                type="text"
+                name="name_ckb"
+                value={formData.name_ckb}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
+              />
+            </div>
+
+            {/* Price */}
+            <div>
+              <label htmlFor="edit-price" className="block text-sm font-semibold text-gray-700 mb-2">
+                نرخ
+              </label>
+              <input
+                id="edit-price"
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
+              />
+            </div>
+
+            {/* Category */}
+            <div>
+              <label htmlFor="edit-category" className="block text-sm font-semibold text-gray-700 mb-2">
+                بەشەکان
+              </label>
+              <select
+                id="edit-category"
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
+              >
+                <option value="">هەڵبژاردنی بەشەکان</option>
+                <option value="main">خواردنە سەرەکیەکان</option>
+                <option value="pizza">برژاو</option>
+                <option value="drinks">خواردنەوە</option>
+                <option value="appetizers">مقەبیلات</option>
+                <option value="breakfast">بەیانیان</option>
+              </select>
+            </div>
+
+            {/* Image Upload */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 وێنە بسووڕینەوە
               </label>
               <div className="relative">
@@ -560,7 +633,7 @@ export default function DashboardPage() {
                   accept="image/*"
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                <div className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg bg-white text-gray-900 cursor-pointer hover:border-green-600 transition flex items-center gap-2 justify-center font-semibold">
+                <div className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg bg-white text-gray-900 cursor-pointer hover:border-[#386641] transition flex items-center gap-2 justify-center font-semibold">
                   <Upload className="w-4 h-4 text-gray-500" />
                   {formData.image_file_name ? formData.image_file_name : 'فایل هیلبژێرە'}
                 </div>
@@ -568,7 +641,7 @@ export default function DashboardPage() {
               {formData.image_url && (
                 <div className="mt-3">
                   <IKImage
-                    src={formData.image_url}
+                    src={getAdminImageUrl(formData.image_url)}
                     alt="Preview"
                     width={400}
                     height={128}
@@ -585,26 +658,33 @@ export default function DashboardPage() {
               </div>
             )}
 
-            <DialogFooter>
+            <DialogFooter className="gap-2">
               <Button
                 type="button"
                 onClick={() => {
                   setShowEditModal(false);
                   setEditingId(null);
-                  setFormData({ name: '', price: '', image_url: '', image_file_name: '', category: '' });
+                  setFormData({ 
+                    name_en: '', 
+                    name_ckb: '', 
+                    price: '', 
+                    image_url: '', 
+                    image_file_name: '', 
+                    category: '' 
+                  });
                   setMessage('');
                   setMessageType('success');
                 }}
                 className="bg-gray-500 hover:bg-gray-600 text-white"
               >
-                هەڵوەشاندن
+                هەڵوەشاندنەوە
               </Button>
               <Button
                 type="submit"
                 disabled={submitting}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-[#386641] hover:bg-[#2a4d30] text-white"
               >
-                {submitting ? 'نوێکردن...' : 'نوێکردنەوە '}
+                {submitting ? 'نوێکردن...' : 'نوێکردنەوە'}
               </Button>
             </DialogFooter>
           </form>
