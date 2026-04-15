@@ -25,7 +25,7 @@ export default function Loading() {
         </div>
 
         {/* Loading text */}
-        <p className="text-[#386641] font-semibold text-sm">در حال بارگذاری...</p>
+       
       </div>
     </div>
   );
