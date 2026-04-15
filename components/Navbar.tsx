@@ -34,10 +34,9 @@ export default function Navbar() {
         <div className="flex gap-2 items-center">
           {/* Language Switcher */}
           <LanguageSwitcher />
-          
           {/* Location Button */}
           <Button
-            className="w-10 h-10 md:w-10 md:h-10 bg-[#386641] hover:bg-[#2a4d30] text-white rounded-md flex items-center justify-center flex-shrink-0"
+            className="w-10 h-10 aspect-square md:w-10 md:h-10 bg-[#386641] hover:bg-[#2a4d30] text-white rounded-md flex items-center justify-center flex-shrink-0"
             onClick={() => setIsOpen(true)}
           >
             <MapPin className="w-6 h-6 md:w-5 md:h-5" />

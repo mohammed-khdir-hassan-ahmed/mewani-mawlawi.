@@ -52,7 +52,7 @@ export default function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="w-8 h-8 md:w-10 md:h-10 aspect-square bg-[#386641] text-white rounded-md flex flex-col items-center justify-center text-base font-bold shadow hover:bg-[#2a4d30] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#386641]/55"
+        className="w-10 h-10 aspect-square bg-[#386641] text-white rounded-md flex flex-col items-center justify-center text-base font-bold shadow hover:bg-[#2a4d30] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#386641]/55"
         aria-label="Change language"
       >
         <Languages size={18} className="mb-0.5" />
