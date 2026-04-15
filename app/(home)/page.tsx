@@ -70,7 +70,5 @@ export default async function Home() {
 /**
  * ISR Configuration:
  * revalidate: 3600 means the page will be regenerated every 3600 seconds (1 hour)
- * Dynamic = 'force-static' ensures static generation even with dynamic imports
  */
 export const revalidate = 3600; // Revalidate every hour
-export const dynamic = 'force-static';

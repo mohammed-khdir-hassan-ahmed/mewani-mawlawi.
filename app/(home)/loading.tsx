@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 export default function Loading() {
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 w-screen h-screen flex items-center justify-center bg-white z-[9999]">
+    <div className="fixed inset-0 w-full h-full flex items-center justify-center bg-white z-50 pointer-events-auto">
       <div className="flex flex-col items-center justify-center gap-12 px-4">
         {/* Logo with ping circles */}
         <div className="relative w-24 h-24 sm:w-32 sm:h-32">
@@ -24,7 +24,8 @@ export default function Loading() {
           />
         </div>
 
-       
+        {/* Loading text */}
+        <p className="text-[#386641] font-semibold text-sm">در حال بارگذاری...</p>
       </div>
     </div>
   );
