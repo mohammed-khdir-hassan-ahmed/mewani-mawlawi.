@@ -27,8 +27,8 @@ function sleep(ms: number): Promise<void> {
 
 async function MenuList() {
   try {
-    // Add 1500 second delay
-    await sleep(5000);
+    // Add 15 second delay
+    await sleep(15000);
     
     // Fetch with Next.js cache
     // revalidate: 3600 means ISR - regenerate every hour
