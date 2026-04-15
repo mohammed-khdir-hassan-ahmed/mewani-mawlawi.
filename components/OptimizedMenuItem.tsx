@@ -17,6 +17,7 @@ interface MenuItem {
   name: string;
   price: number;
   image_url: string;
+  category?: string;
 }
 
 interface OptimizedMenuItemProps {

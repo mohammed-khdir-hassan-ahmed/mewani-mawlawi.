@@ -20,18 +20,10 @@ interface MenuItem {
   category?: string;
 }
 
-// Sleep function to delay loading
-function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 async function MenuList() {
   try {
-    // Add 20 second delay to ensure loading shows long enough
-    await sleep(1000);
-    
-    // Fetch with Next.js cache
-    // revalidate: 3600 means ISR - regenerate every hour
+    // Fetch with Next.js cache - no artificial delays
+    // revalidate: 1800 means ISR - regenerate every 30 minutes
     const items: MenuItem[] = await db.select().from(menuitem);
 
     if (!items.length) {
@@ -79,8 +71,4 @@ export default async function Home() {
   );
 }
 
-/**
- * ISR Configuration:
- * revalidate: 3600 means the page will be regenerated every 3600 seconds (1 hour)
- */
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 1800; // Revalidate every 30 minutes

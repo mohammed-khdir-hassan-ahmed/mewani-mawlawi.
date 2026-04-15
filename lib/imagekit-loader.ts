@@ -22,7 +22,8 @@ export const imageKitLoader = ({ src, width, quality }: ImageLoaderProps): strin
   }
 
   // Quality optimization (1-100)
-  const q = quality || 75;
+  // Lower quality for thumbnails (60), higher for details (80)
+  const q = quality || (width && width < 400 ? 60 : 80);
   params.append('q', q.toString());
 
   // Format negotiation - use webp for better compression
@@ -31,11 +32,17 @@ export const imageKitLoader = ({ src, width, quality }: ImageLoaderProps): strin
   // Progressive JPEG as fallback
   params.append('pr', 'true');
 
-  // Cache control - long expiry
-  params.append('e', '2147483647');
+  // Cache control - 30 days expiry (static timestamp)
+  // Use a fixed long-term expiry to avoid hydration mismatches
+  params.append('e', '2147483647');  // Unix timestamp year 2038
 
   // Automatic trimming for consistent aspect ratios
   params.append('c', 'at');
+
+  // Optimize for mobile - reduce DPI for smaller screens
+  if (width && width < 768) {
+    params.append('dpr', 'auto'); // Auto DPI scaling
+  }
 
   const queryString = params.toString();
   const separator = src.includes('?') ? '&' : '?';

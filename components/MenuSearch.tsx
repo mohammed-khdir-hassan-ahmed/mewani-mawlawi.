@@ -31,6 +31,14 @@ export default function MenuSearch({ items }: MenuSearchProps) {
     { id: 'breakfast', name: 'بەیانیان', icon: Egg },
   ];
 
+  const categoryMap: { [key: string]: string } = {
+    'main': 'خواردنە سەرەکیەکان',
+    'pizza': 'برژاو',
+    'drinks': 'خواردنەوە',
+    'appetizers': 'مقەبیلات',
+    'breakfast': 'بەیانیان',
+  };
+
   let filteredItems = items.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
@@ -39,6 +47,18 @@ export default function MenuSearch({ items }: MenuSearchProps) {
 
   if (isSortedByPrice) {
     filteredItems = [...filteredItems].sort((a, b) => a.price - b.price);
+  }
+
+  // Group items by category when viewing "all"
+  const groupedItems: { [key: string]: MenuItem[] } = {};
+  if (selectedCategory === 'all') {
+    filteredItems.forEach(item => {
+      const cat = item.category || 'main';
+      if (!groupedItems[cat]) {
+        groupedItems[cat] = [];
+      }
+      groupedItems[cat].push(item);
+    });
   }
 
   return (
@@ -112,7 +132,36 @@ export default function MenuSearch({ items }: MenuSearchProps) {
 
       {/* Menu Grid */}
       <div className="mt-6">
-        <MenuGrid items={filteredItems} />
+        {selectedCategory === 'all' && Object.keys(groupedItems).length > 0 ? (
+          <div className="flex flex-col gap-10">
+            {Object.entries(groupedItems).map(([categoryId, categoryItems]) => (
+              <div key={categoryId}>
+                <div className="mb-6 md:mb-8">
+                  {/* Mobile: Stacked layout */}
+                  <div className="md:hidden flex items-center justify-center gap-3">
+                    <div className="flex-1 h-0.5 bg-[#386641]"></div>
+                    <h2 className="text-base font-bold text-[#386641] text-center whitespace-nowrap px-2">
+                      {categoryMap[categoryId] || categoryId}
+                    </h2>
+                    <div className="flex-1 h-0.5 bg-[#386641]"></div>
+                  </div>
+                  
+                  {/* Desktop: Line design */}
+                  <div className="hidden md:flex items-center justify-center gap-4">
+                    <div className="flex-1 h-0.5 bg-[#386641]"></div>
+                    <h2 className="text-xl md:text-2xl font-bold text-[#386641] whitespace-nowrap px-4">
+                      {categoryMap[categoryId] || categoryId}
+                    </h2>
+                    <div className="flex-1 h-0.5 bg-[#386641]"></div>
+                  </div>
+                </div>
+                <MenuGrid items={categoryItems} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <MenuGrid items={filteredItems} />
+        )}
       </div>
     </>
   );
