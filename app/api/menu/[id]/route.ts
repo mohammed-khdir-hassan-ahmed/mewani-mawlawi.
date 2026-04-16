@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
 import { menuitem } from '@/src/db/schema';
 import { eq } from 'drizzle-orm';
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 
 const sql = neon(process.env.DATABASE_URL!);
 const db = drizzle(sql);
@@ -48,7 +48,6 @@ export async function PUT(
 
     // Revalidate the home page cache
     revalidatePath('/');
-    revalidateTag('menu-items');
 
     return Response.json(updatedItem[0], { status: 200 });
   } catch (error) {
@@ -76,7 +75,6 @@ export async function DELETE(
     }
 
     // Revalidate the home page cache
-    revalidateTag('menu-items');
     revalidatePath('/');
 
     return Response.json({ message: 'Item deleted successfully' }, { status: 200 });

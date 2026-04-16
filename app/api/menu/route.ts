@@ -64,7 +64,6 @@ export async function POST(request: Request) {
       revalidatePath(`/${locale}`, 'page');
     }
     revalidatePath('/', 'page');
-    revalidateTag('menu-items');
     
     return Response.json(newItem[0], { status: 201 });
   } catch (error) {
