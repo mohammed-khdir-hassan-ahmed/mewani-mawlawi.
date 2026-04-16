@@ -24,14 +24,7 @@ export interface MenuItem {
 }
 
 /**
- * Get all menu items - Cached for 30 minutes
- * 
- * Performance:
- * - First call (cold): 300-500ms (Neon cold start + DB query)
- * - Cached hits: 5-20ms (network only)
- * 
- * Deduplication: Multiple concurrent calls to this function will only
- * trigger a single database query thanks to unstable_cache
+ * Get all menu items - Revalidated by API mutations via revalidateTag
  */
 export const getAllMenuItems = unstable_cache(
   async (): Promise<MenuItem[]> => {
@@ -45,7 +38,7 @@ export const getAllMenuItems = unstable_cache(
   },
   ['all-menu-items'],
   {
-    revalidate: 1800, // 30 minutes
+    revalidate: 60, // Short TTL - rely on revalidateTag for real-time updates
     tags: ['menu-items'],
   }
 );
