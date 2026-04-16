@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Languages } from 'lucide-react';
 
-const KNOWN_LOCALES = new Set(['en', 'ku']);
+const KNOWN_LOCALES = new Set(['en', 'ku', 'ar']);
 
 function getBasePath(pathname: string): string {
   const segments = pathname.split('/').filter(Boolean);

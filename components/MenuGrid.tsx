@@ -30,7 +30,10 @@ export default function MenuGrid({ items }: MenuGridProps) {
   
   const getDisplayName = (item: MenuItem) => {
     // Show language-specific name with proper fallbacks
-    if (locale === 'ku') {
+    if (locale === 'ar') {
+      // For Arabic: prefer name_arb, then name_en, then name_ckb
+      return (item as any).name_arb || item.name_en || item.name_ckb || 'Menu Item';
+    } else if (locale === 'ku') {
       // For Kurdish: prefer name_ckb, then legacy name, then English
       return item.name_ckb || item.name || item.name_en || 'Menu Item';
     } else {

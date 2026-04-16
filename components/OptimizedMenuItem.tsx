@@ -48,7 +48,10 @@ export default function OptimizedMenuItem({
   
   // Get the appropriate name based on locale with proper fallbacks
   const getDisplayName = () => {
-    if (locale === 'ku') {
+    if (locale === 'ar') {
+      // For Arabic: prefer name_arb, then name_en, then name_ckb
+      return (item as any).name_arb || item.name_en || item.name_ckb || 'Menu Item';
+    } else if (locale === 'ku') {
       // For Kurdish: prefer name_ckb, then legacy name, then English
       return item.name_ckb || item.name || item.name_en || 'Menu Item';
     } else {
@@ -56,7 +59,7 @@ export default function OptimizedMenuItem({
       return item.name_en || item.name || item.name_ckb || 'Menu Item';
     }
   };
-  
+
   const displayName = getDisplayName();
   
   // Alternate animation direction: even items from left, odd from right
@@ -127,7 +130,7 @@ export default function OptimizedMenuItem({
       {/* Content */}
       <div className="p-4 flex flex-col justify-between flex-1">
         <div className="flex items-start gap-3">
-          <div className="flex flex-col justify-center flex-1 min-w-0">
+          <div className={`flex flex-col justify-center flex-1 min-w-0${(locale === 'ar' || locale === 'ku') ? ' items-start text-left' : ''}`}> 
             <div className="font-bold text-sm md:text-base line-clamp-2">
               {displayName}
             </div>

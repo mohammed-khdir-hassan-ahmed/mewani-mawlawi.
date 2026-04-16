@@ -29,6 +29,7 @@ export default function DashboardPage() {
   const [formData, setFormData] = useState({
     name_en: '',
     name_ckb: '',
+    name_arb: '',
     price: '',
     image_url: '',
     image_file_name: '',
@@ -58,10 +59,21 @@ export default function DashboardPage() {
   const fetchItems = async () => {
     try {
       const response = await fetch('/api/menu');
+      if (!response.ok) {
+        console.error('Error fetching items: HTTP', response.status);
+        setItems([]);
+        return;
+      }
       const data = await response.json();
-      setItems(data);
+      if (Array.isArray(data)) {
+        setItems(data);
+      } else {
+        console.error('Error: API did not return an array', data);
+        setItems([]);
+      }
     } catch (error) {
       console.error('Error fetching items:', error);
+      setItems([]);
     }
   };
 
@@ -142,8 +154,8 @@ export default function DashboardPage() {
     setMessage('');
 
     try {
-      if (!formData.name_en || !formData.name_ckb || !formData.price) {
-        setMessage('براکو ناو (ئینگلێزی و کوردی) و نرخ پڕ بکە');
+      if (!formData.name_en || !formData.name_ckb || !formData.name_arb || !formData.price) {
+        setMessage('براکو ناو (ئینگلێزی، کوردی و عەرەبی) و نرخ پڕ بکە');
         setMessageType('error');
         setSubmitting(false);
         return;
@@ -164,6 +176,7 @@ export default function DashboardPage() {
         body: JSON.stringify({
           name_en: formData.name_en,
           name_ckb: formData.name_ckb,
+          name_arb: formData.name_arb,
           price: parseInt(formData.price),
           image_url: formData.image_url,
           category: formData.category,
@@ -176,6 +189,7 @@ export default function DashboardPage() {
         setFormData({ 
           name_en: '', 
           name_ckb: '', 
+          name_arb: '', 
           price: '', 
           image_url: '', 
           image_file_name: '', 
@@ -232,6 +246,7 @@ export default function DashboardPage() {
     setFormData({
       name_en: item.name_en || '',
       name_ckb: item.name_ckb || '',
+      name_arb: item.name_arb || '',
       price: item.price.toString(),
       image_url: item.image_url,
       image_file_name: '',
@@ -257,6 +272,7 @@ export default function DashboardPage() {
         body: JSON.stringify({
           name_en: formData.name_en,
           name_ckb: formData.name_ckb,
+          name_arb: formData.name_arb,
           price: parseInt(formData.price),
           image_url: formData.image_url,
           category: formData.category,
@@ -269,6 +285,7 @@ export default function DashboardPage() {
         setFormData({ 
           name_en: '', 
           name_ckb: '', 
+          name_arb: '', 
           price: '', 
           image_url: '', 
           image_file_name: '', 
@@ -368,6 +385,7 @@ export default function DashboardPage() {
                   <div>
                     <p className="font-bold text-base sm:text-lg text-gray-900 truncate">{item.name_en}</p>
                     <p className="font-bold text-sm sm:text-base text-gray-700 mb-1 sm:mb-2 truncate">{item.name_ckb}</p>
+                    {item.name_arb && <p className="font-bold text-sm sm:text-base text-gray-700 mb-1 sm:mb-2 truncate">{item.name_arb}</p>}
                     <p className="text-xs sm:text-sm text-[#386641] font-bold mb-2 sm:mb-3">{item.price} دینار</p>
                     {item.category && (
                       <p className="text-xs text-gray-500 mb-2 sm:mb-3">بەش: {item.category}</p>
@@ -418,9 +436,9 @@ export default function DashboardPage() {
                 name="name_en"
                 value={formData.name_en}
                 onChange={handleInputChange}
-                placeholder="  Food Name"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-[#386641]"
+                placeholder="Food name in English"
                 required
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
               />
             </div>
 
@@ -436,6 +454,23 @@ export default function DashboardPage() {
                 value={formData.name_ckb}
                 onChange={handleInputChange}
                 placeholder="ناوی خواردنەی"
+                required
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
+              />
+            </div>
+
+            {/* Arabic Name */}
+            <div>
+              <label htmlFor="name_arb" className="block text-sm font-semibold text-gray-700 mb-2">
+                ناوی خواردن (Arabic) *
+              </label>
+              <input
+                id="name_arb"
+                type="text"
+                name="name_arb"
+                value={formData.name_arb}
+                onChange={handleInputChange}
+                placeholder="اسم الطعام"
                 required
                 className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
               />
@@ -528,6 +563,7 @@ export default function DashboardPage() {
                   setFormData({ 
                     name_en: '', 
                     name_ckb: '', 
+                    name_arb: '', 
                     price: '', 
                     image_url: '', 
                     image_file_name: '', 
@@ -586,6 +622,22 @@ export default function DashboardPage() {
                 type="text"
                 name="name_ckb"
                 value={formData.name_ckb}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
+              />
+            </div>
+
+            {/* Arabic Name */}
+            <div>
+              <label htmlFor="edit-name_arb" className="block text-sm font-semibold text-gray-700 mb-2">
+                ناوی خواردنەی (Arabic)
+              </label>
+              <input
+                id="edit-name_arb"
+                type="text"
+                name="name_arb"
+                value={formData.name_arb}
                 onChange={handleInputChange}
                 required
                 className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
@@ -677,6 +729,7 @@ export default function DashboardPage() {
                   setFormData({ 
                     name_en: '', 
                     name_ckb: '', 
+                    name_arb: '', 
                     price: '', 
                     image_url: '', 
                     image_file_name: '', 

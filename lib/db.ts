@@ -14,12 +14,11 @@ export const db = drizzle(sql);
 
 export interface MenuItem {
   id: number;
-  name: string; // Legacy field - kept for backwards compatibility
-  name_en: string | null;
-  name_ckb: string | null;
+  name_en: string;
+  name_ckb: string;
+  name_arb?: string | null;
   price: number;
   image_url: string;
-  image_file_name?: string | null;
   category: string;
 }
 

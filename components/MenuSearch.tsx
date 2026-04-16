@@ -44,7 +44,10 @@ export default function MenuSearch({ items }: MenuSearchProps) {
   
   const getDisplayName = (item: MenuItem) => {
     // Show language-specific name with proper fallbacks
-    if (locale === 'ku') {
+    if (locale === 'ar') {
+      // For Arabic: prefer name_arb, then name_en, then name_ckb
+      return (item as any).name_arb || item.name_en || item.name_ckb || 'Menu Item';
+    } else if (locale === 'ku') {
       // For Kurdish: prefer name_ckb, then legacy name, then English
       return item.name_ckb || item.name || item.name_en || 'Menu Item';
     } else {
@@ -54,20 +57,20 @@ export default function MenuSearch({ items }: MenuSearchProps) {
   };
 
   const categories = [
-    { id: 'all', name: locale === 'en' ? 'All Items' : ' هەموو خواردنەکان', icon: Home },
-    { id: 'main', name: locale === 'en' ? 'Main Dishes' : 'خواردنە سەرەکیەکان', icon: Utensils },
-    { id: 'pizza', name: locale === 'en' ? 'Roasted' : 'برژاو', icon: Beef },
-    { id: 'drinks', name: locale === 'en' ? 'Drinks' : 'خواردنەوە', icon: BottleWine },
-    { id: 'appetizers', name: locale === 'en' ? 'Appetizers' : 'مقەبیلات', icon: Salad },
-    { id: 'breakfast', name: locale === 'en' ? 'Breakfast' : 'بەیانیان', icon: Egg },
+    { id: 'all', name: locale === 'en' ? 'All Items' : locale === 'ar' ? 'جميع الأصناف' : ' هەموو خواردنەکان', icon: Home },
+    { id: 'main', name: locale === 'en' ? 'Main Dishes' : locale === 'ar' ? 'الأطباق الرئيسية' : 'خواردنە سەرەکیەکان', icon: Utensils },
+    { id: 'pizza', name: locale === 'en' ? 'Roasted' : locale === 'ar' ? 'مشويات' : 'برژاو', icon: Beef },
+    { id: 'drinks', name: locale === 'en' ? 'Drinks' : locale === 'ar' ? 'مشروبات' : 'خواردنەوە', icon: BottleWine },
+    { id: 'appetizers', name: locale === 'en' ? 'Appetizers' : locale === 'ar' ? 'المقبلات' : 'مقەبیلات', icon: Salad },
+    { id: 'breakfast', name: locale === 'en' ? 'Breakfast' : locale === 'ar' ? 'فطور' : 'بەیانیان', icon: Egg },
   ];
 
   const categoryMap: { [key: string]: string } = {
-    'main': locale === 'en' ? 'Main Dishes' : 'خواردنە سەرەکیەکان',
-    'pizza': locale === 'en' ? 'Roasted' : 'برژاو',
-    'drinks': locale === 'en' ? 'Drinks' : 'خواردنەوە',
-    'appetizers': locale === 'en' ? 'Appetizers' : 'مقەبیلات',
-    'breakfast': locale === 'en' ? 'Breakfast' : 'بەیانیان',
+    'main': locale === 'en' ? 'Main Dishes' : locale === 'ar' ? 'الأطباق الرئيسية' : 'خواردنە سەرەکیەکان',
+    'pizza': locale === 'en' ? 'Roasted' : locale === 'ar' ? 'مشويات' : 'برژاو',
+    'drinks': locale === 'en' ? 'Drinks' : locale === 'ar' ? 'مشروبات' : 'خواردنەوە',
+    'appetizers': locale === 'en' ? 'Appetizers' : locale === 'ar' ? 'المقبلات' : 'مقەبیلات',
+    'breakfast': locale === 'en' ? 'Breakfast' : locale === 'ar' ? 'فطور' : 'بەیانیان',
   };
 
   // Memoized filtering to prevent unnecessary re-renders
@@ -76,7 +79,8 @@ export default function MenuSearch({ items }: MenuSearchProps) {
       const displayName = getDisplayName(item);
       const matchesSearch = displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            (item.name_en?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
-                           (item.name_ckb?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
+                           (item.name_ckb?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+                           ((item as any).name_arb?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
       const matchesCategory = selectedCategory === 'all' || normalizeCategory(item.category) === selectedCategory;
       return matchesSearch && matchesCategory;
     });
@@ -179,6 +183,17 @@ export default function MenuSearch({ items }: MenuSearchProps) {
                   className="w-full pr-10 pl-4 py-6 md:py-5 rounded-lg border border-gray-300 focus:border-[#386641] focus:outline-none focus:ring-2 focus:ring-[#386641]/10 transition-all text-base placeholder:text-sm"
                 />
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              </>
+            ) : locale === 'ar' ? (
+              <>
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Input 
+                  type="text" 
+                  placeholder="ماذا تريد أن تأكل؟"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-6 md:py-5 rounded-lg border border-gray-300 focus:border-[#386641] focus:outline-none focus:ring-2 focus:ring-[#386641]/10 transition-all text-base placeholder:text-sm"
+                />
               </>
             ) : (
               <>
