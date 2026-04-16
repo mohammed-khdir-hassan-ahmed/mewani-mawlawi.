@@ -65,7 +65,7 @@ export default function MenuGrid({ items }: MenuGridProps) {
           }}
         >
           <DialogContent className="max-h-[85vh] overflow-y-auto max-w-xs md:max-w-sm">
-            <DialogTitle className="hidden md:block text-lg md:text-xl">{getDisplayName(selectedItem)}</DialogTitle>
+            
 
             {/* Detail Image with optimization */}
             <div className="rounded-lg overflow-hidden mb-4 -mt-6 -mx-6 bg-gray-100">
@@ -90,24 +90,26 @@ export default function MenuGrid({ items }: MenuGridProps) {
                 {getDisplayName(selectedItem)}
               </h2>
               <p className="text-lg md:text-xl font-bold text-[#386641] whitespace-nowrap">
-                {formatPrice(selectedItem.price * quantity)} {locale === 'en' ? 'IQD' : 'هەزار'}
+                {formatPrice(selectedItem.price * quantity)} {locale === 'en' ? 'IQD' : 'دینار'}
               </p>
             </div>
 
             {/* Quantity Selector */}
-            <div className="flex items-center justify-center gap-1 bg-gray-100 rounded-lg p-1 mb-3 w-full mx-auto">
+            <div className="flex items-center justify-center gap-2 bg-gray-100 rounded-lg p-2 mb-3 w-full mx-auto">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="hover:bg-gray-200 rounded p-0.5 transition"
+                className="hover:bg-gray-200 rounded p-2 transition"
+                style={{ minWidth: 40, minHeight: 40 }}
               >
-                <Minus className="w-3 h-3" />
+                <Minus className="w-6 h-6 md:w-7 md:h-7" />
               </button>
-              <span className="text-base font-bold w-6 text-center">{quantity}</span>
+              <span className="text-xl md:text-2xl font-bold w-10 text-center">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
-                className="hover:bg-gray-200 rounded p-0.5 transition"
+                className="hover:bg-gray-200 rounded p-2 transition"
+                style={{ minWidth: 40, minHeight: 40 }}
               >
-                <Plus className="w-3 h-3" />
+                <Plus className="w-6 h-6 md:w-7 md:h-7" />
               </button>
             </div>
 

@@ -56,7 +56,7 @@ export default function MenuSearch({ items }: MenuSearchProps) {
   const categories = [
     { id: 'all', name: locale === 'en' ? 'All Items' : ' هەموو خواردنەکان', icon: Home },
     { id: 'main', name: locale === 'en' ? 'Main Dishes' : 'خواردنە سەرەکیەکان', icon: Utensils },
-    { id: 'pizza', name: locale === 'en' ? 'Pizza' : 'برژاو', icon: Beef },
+    { id: 'pizza', name: locale === 'en' ? 'Roasted' : 'برژاو', icon: Beef },
     { id: 'drinks', name: locale === 'en' ? 'Drinks' : 'خواردنەوە', icon: BottleWine },
     { id: 'appetizers', name: locale === 'en' ? 'Appetizers' : 'مقەبیلات', icon: Salad },
     { id: 'breakfast', name: locale === 'en' ? 'Breakfast' : 'بەیانیان', icon: Egg },
@@ -64,7 +64,7 @@ export default function MenuSearch({ items }: MenuSearchProps) {
 
   const categoryMap: { [key: string]: string } = {
     'main': locale === 'en' ? 'Main Dishes' : 'خواردنە سەرەکیەکان',
-    'pizza': locale === 'en' ? 'Pizza' : 'برژاو',
+    'pizza': locale === 'en' ? 'Roasted' : 'برژاو',
     'drinks': locale === 'en' ? 'Drinks' : 'خواردنەوە',
     'appetizers': locale === 'en' ? 'Appetizers' : 'مقەبیلات',
     'breakfast': locale === 'en' ? 'Breakfast' : 'بەیانیان',

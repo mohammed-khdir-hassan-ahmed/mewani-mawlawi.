@@ -47,7 +47,7 @@ export default function Navbar() {
       {/* Modal */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="w-[80vw]  max-w-sm md:max-w-md max-h-[85vh] overflow-y-auto p-3 md:p-4">
-          <DialogTitle className="sr-only">Restaurant Information</DialogTitle>
+        
 
           {/* Logo & Name */}
           <div className="flex flex-col items-center gap-2 mb-3">
@@ -59,6 +59,7 @@ export default function Navbar() {
                 className="object-contain"
               />
             </div>
+            <span className="font-bold text-lg md:text-xl text-[#386641] mt-1">میوانی مەولەوی</span>
           </div>
 
           {/* Content */}
@@ -153,6 +154,7 @@ export default function Navbar() {
               >
                07719776307
               </button>
+              
             </div>
 
             {/* Opening Hours Card */}
