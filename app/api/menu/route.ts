@@ -60,11 +60,11 @@ export async function POST(request: Request) {
     
     // Revalidate the home page cache
     // Invalidate all locale home pages so new items show up immediately
-    for (const locale of locales) {
-      revalidatePath(`/${locale}`);
-    }
-    revalidatePath('/');
-    revalidateTag('menu-items');
+      for (const locale of locales) {
+        revalidatePath(`/${locale}`, 'page');
+      }
+      revalidatePath('/', 'page');
+      revalidateTag('menu-items', '/');
     
     return Response.json(newItem[0], { status: 201 });
   } catch (error) {
