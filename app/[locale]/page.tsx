@@ -1,4 +1,6 @@
 import { Suspense } from 'react';
+// Force dynamic rendering to always fetch fresh data
+export const dynamic = 'force-dynamic';
 import { getAllMenuItems, type MenuItem } from '@/lib/db';
 import MenuSearch from '@/components/MenuSearch';
 import ImageKitWrapper from '@/components/ImageKitWrapper';
