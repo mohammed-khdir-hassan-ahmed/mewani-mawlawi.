@@ -65,9 +65,6 @@ export async function POST(request: Request) {
     }
     revalidatePath('/', 'page');
     
-    // Revalidate the cached menu items
-    revalidateTag('menu-items');
-    
     return Response.json(newItem[0], { status: 201 });
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);

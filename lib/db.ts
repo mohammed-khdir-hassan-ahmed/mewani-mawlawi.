@@ -24,7 +24,7 @@ export interface MenuItem {
 }
 
 /**
- * Get all menu items - Revalidated by API mutations via revalidateTag
+ * Get all menu items - Revalidated every 60 seconds
  */
 export const getAllMenuItems = unstable_cache(
   async (): Promise<MenuItem[]> => {
@@ -38,8 +38,7 @@ export const getAllMenuItems = unstable_cache(
   },
   ['all-menu-items'],
   {
-    revalidate: 60, // Short TTL - rely on revalidateTag for real-time updates
-    tags: ['menu-items'],
+    revalidate: 60, // Short TTL for real-time updates
   }
 );
 
@@ -75,8 +74,7 @@ export const getMenuItemsByCategory = unstable_cache(
   // Cache key - will be called with specific category
   ['menu-items-by-category'],
   {
-    revalidate: 1800, // 30 minutes
-    tags: ['menu-items'],
+    revalidate: 60, // Short TTL for real-time updates
   }
 );
 
@@ -103,8 +101,7 @@ export const getCategories = unstable_cache(
   },
   ['menu-categories'],
   {
-    revalidate: 3600, // 1 hour
-    tags: ['menu-categories'],
+    revalidate: 60, // Short TTL for real-time updates
   }
 );
 
@@ -127,8 +124,7 @@ export const getMenuItemById = unstable_cache(
   },
   ['menu-item-by-id'],
   {
-    revalidate: 1800,
-    tags: ['menu-items'],
+    revalidate: 60,
   }
 );
 
