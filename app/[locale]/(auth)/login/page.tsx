@@ -64,7 +64,7 @@ export default function LoginPage() {
         <Home className="w-5 h-5" />
       </button>
 
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8" dir="rtl">
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <div className="w-24 h-24">
@@ -79,14 +79,14 @@ export default function LoginPage() {
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl font-bold text-center text-gray-900 mb-2">
-           داشبۆرد
-        </h1>
+            <h1 className="text-3xl font-bold text-center text-gray-900 mb-2" style={{textAlign:'center'}}>
+              داشبۆرد
+            </h1>
         {/* Form */}
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4" style={{textAlign:'right'}}>
           {/* Username */}
           <div>
-            <label htmlFor="username" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label htmlFor="username" className="block text-sm font-semibold text-gray-700 mb-2 text-right">
               ناویی بەکارهێنەر
             </label>
             <input
@@ -96,13 +96,14 @@ export default function LoginPage() {
               onChange={(e) => setUsername(e.target.value)}
               placeholder="ناویی بەکارهێنەر"
               required
-              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900 text-right placeholder:text-right"
+              style={{direction:'rtl'}}
             />
           </div>
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2 text-right">
         وشەی نهێنی
             </label>
             <input
@@ -112,12 +113,13 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="وشەی نهێنی"
               required
-              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900"
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#386641] text-gray-900 text-right placeholder:text-right"
+              style={{direction:'rtl'}}
             />
           </div>
 
           {error && (
-            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded">
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded text-right" style={{direction:'rtl'}}>
               {error}
             </div>
           )}
@@ -125,7 +127,8 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#386641] hover:bg-[#2a4d30] text-white rounded-lg py-5 font-medium text-sm transition-all "
+            className="w-full bg-[#386641] hover:bg-[#2a4d30] text-white rounded-lg py-5 font-medium text-sm transition-all text-right"
+            style={{direction:'rtl'}}
           >
             {loading ? 'چونەژوورەوە...' : 'چونەژوورەوە'}
             <LogIn className="w-7 h-7 mr-2" />

@@ -2,7 +2,8 @@ import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
 import { menuitem } from '@/src/db/schema';
 import { eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
+import { locales } from '@/i18n/request';
 
 const sql = neon(process.env.DATABASE_URL!);
 const db = drizzle(sql);
@@ -58,7 +59,12 @@ export async function POST(request: Request) {
     console.log('✅ Item inserted successfully:', newItem[0]);
     
     // Revalidate the home page cache
+    // Invalidate all locale home pages so new items show up immediately
+    for (const locale of locales) {
+      revalidatePath(`/${locale}`);
+    }
     revalidatePath('/');
+    revalidateTag('menu-items');
     
     return Response.json(newItem[0], { status: 201 });
   } catch (error) {

@@ -321,7 +321,7 @@ export default function DashboardPage() {
               className="bg-[#386641] hover:bg-green-700 text-white rounded-lg px-4 py-2"
             >
               <LogOut className="w-4 h-4 mr-2" />
-              چوونەژوورەوە
+              چوونەدەرەوە
             </Button>
           </div>
         </div>
@@ -329,53 +329,61 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-white">خواردنەکان ({items.length})</h2>
+        <div className="w-full mb-4 flex flex-col md:flex-row md:items-center md:justify-end gap-2">
           <Button
             onClick={() => setShowAddModal(true)}
-            className="bg-[#386641] hover:bg-green-700 text-white rounded-lg px-6 py-2 font-bold flex items-center gap-2"
+            className="bg-[#386641] hover:bg-green-700 text-white rounded-lg px-6 py-3 font-bold flex items-center gap-2 w-full md:w-auto md:ml-auto"
           >
             <Plus className="w-5 h-5" />
             زیادکردنی خواردنی نوێ
           </Button>
         </div>
 
+        {/* Item count below button, above grid */}
+        <div className="w-full mb-4 flex justify-center">
+          <h2 className="text-xl font-bold text-gray-800">
+            ژمارەی خواردنەکان : <span className="text-[#386641]">{items.length}</span>
+          </h2>
+        </div>
+
         {/* Items Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {items.length === 0 ? (
             <div className="col-span-full text-center py-12 bg-white rounded-xl">
               <p className="text-gray-500 text-lg">هیچ خواردنێک بەردەست نییە!</p>
             </div>
           ) : (
             items.map((item, idx) => (
-              <div key={item.id || idx} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+              <div key={item.id || idx} className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow flex flex-col m-1 border border-gray-100">
                 <div className="relative">
                   <IKImage
                     src={getAdminImageUrl(item.image_url)}
                     alt={item.name_en}
                     width={300}
                     height={200}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-36 sm:h-44 object-cover"
                   />
                 </div>
-                <div className="p-4">
-                  <p className="font-bold text-lg text-gray-900">{item.name_en}</p>
-                  <p className="font-bold text-base text-gray-700 mb-2">{item.name_ckb}</p>
-                  <p className="text-sm text-[#386641] font-bold mb-3">{item.price} دینار</p>
-                  {item.category && (
-                    <p className="text-xs text-gray-500 mb-3">قۆناغ: {item.category}</p>
-                  )}
-                  <div className="flex gap-2">
+                <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
+                  <div>
+                    <p className="font-bold text-base sm:text-lg text-gray-900 truncate">{item.name_en}</p>
+                    <p className="font-bold text-sm sm:text-base text-gray-700 mb-1 sm:mb-2 truncate">{item.name_ckb}</p>
+                    <p className="text-xs sm:text-sm text-[#386641] font-bold mb-2 sm:mb-3">{item.price} دینار</p>
+                    {item.category && (
+                      <p className="text-xs text-gray-500 mb-2 sm:mb-3">بەش: {item.category}</p>
+                    )}
+                  </div>
+                  <div className="flex gap-2 mt-2">
                     <button
                       onClick={() => handleEditClick(item)}
-                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-2 transition flex items-center justify-center gap-2 font-semibold"
+                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-2 transition flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm"
                     >
                       <Edit className="w-4 h-4" />
                       گۆڕین
                     </button>
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-lg p-2 transition flex items-center justify-center gap-2 font-semibold"
+                      className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-lg p-2 transition flex items-center justify-center gap-2 font-semibold text-xs sm:text-sm"
                     >
                       <Trash2 className="w-4 h-4" />
                       سڕینەوە
@@ -386,13 +394,15 @@ export default function DashboardPage() {
             ))
           )}
         </div>
+
+
       </div>
 
       {/* Add Item Modal */}
       <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-center">زیادکردنی خواردنی نوێ</DialogTitle>
+            <DialogTitle className="text-2xl font-bold py-2 text-center">زیادکردنی خواردنی نوێ</DialogTitle>
            
           </DialogHeader>
 
@@ -400,7 +410,7 @@ export default function DashboardPage() {
             {/* English Name */}
             <div>
               <label htmlFor="name_en" className="block text-sm font-semibold text-gray-700 mb-2">
-                ناوی خواردنەی (English) *
+                ناوی خواردن (English) *
               </label>
               <input
                 id="name_en"
@@ -417,7 +427,7 @@ export default function DashboardPage() {
             {/* Kurdish Name */}
             <div>
               <label htmlFor="name_ckb" className="block text-sm font-semibold text-gray-700 mb-2">
-                ناوی خواردنەی (Kurdish) *
+                ناوی خواردن (Kurdish) *
               </label>
               <input
                 id="name_ckb"
