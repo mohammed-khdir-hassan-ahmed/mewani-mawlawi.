@@ -9,12 +9,7 @@ import ScrollButtons from '@/components/ScrollButtons';
 import Navbar from '@/components/Navbar';
 import Loading from './loading';
 
-/**
- * Load menu items server-side
- * Uses unstable_cache for request memoization (95% faster on repeat requests)
- * Cold start: ~400-500ms (Neon DB + query)
- * Cached: ~10-20ms
- */
+
 async function MenuList({ locale }: { locale: string }) {
   try {
     const items: MenuItem[] = await getAllMenuItems();
