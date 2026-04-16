@@ -34,11 +34,11 @@ export default function MenuGrid({ items }: MenuGridProps) {
       // For Arabic: prefer name_arb, then name_en, then name_ckb
       return (item as any).name_arb || item.name_en || item.name_ckb || 'Menu Item';
     } else if (locale === 'ku') {
-      // For Kurdish: prefer name_ckb, then legacy name, then English
-      return item.name_ckb || item.name || item.name_en || 'Menu Item';
+      // For Kurdish: prefer name_ckb, then English
+      return item.name_ckb || item.name_en || 'Menu Item';
     } else {
-      // For English: prefer name_en, then legacy name, then Kurdish
-      return item.name_en || item.name || item.name_ckb || 'Menu Item';
+      // For English: prefer name_en, then Kurdish
+      return item.name_en || item.name_ckb || 'Menu Item';
     }
   };
 

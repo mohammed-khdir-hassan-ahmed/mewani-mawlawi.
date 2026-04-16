@@ -132,15 +132,24 @@ export const getMenuItemById = unstable_cache(
  * Cache will revalidate automatically after TTL expires
  */
 export async function insertMenuItem(data: {
-  name: string;
+  name_en: string;
+  name_ckb: string;
+  name_arb?: string | null;
   price: number;
   image_url: string;
-  category: string;
+  category?: string;
 }): Promise<MenuItem> {
   try {
     const result = await db
       .insert(menuitem)
-      .values(data)
+      .values({
+        name_en: data.name_en,
+        name_ckb: data.name_ckb,
+        name_arb: data.name_arb || null,
+        price: data.price,
+        image_url: data.image_url,
+        category: data.category || 'main',
+      })
       .returning();
     
     // Cache will be automatically invalidated after TTL (30 min)
@@ -158,14 +167,17 @@ export async function insertMenuItem(data: {
  */
 export async function updateMenuItem(id: number, data: Partial<MenuItem>): Promise<MenuItem> {
   try {
+    const updateData: any = {};
+    if (data.name_en) updateData.name_en = data.name_en;
+    if (data.name_ckb) updateData.name_ckb = data.name_ckb;
+    if (data.name_arb !== undefined) updateData.name_arb = data.name_arb;
+    if (data.price) updateData.price = data.price;
+    if (data.image_url) updateData.image_url = data.image_url;
+    if (data.category) updateData.category = data.category;
+
     const result = await db
       .update(menuitem)
-      .set({
-        name: data.name,
-        price: data.price,
-        image_url: data.image_url,
-        category: data.category,
-      })
+      .set(updateData)
       .where(eq(menuitem.id, id))
       .returning();
 
