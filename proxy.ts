@@ -6,6 +6,7 @@ const intlMiddleware = createMiddleware({
   locales: locales as unknown as string[],
   defaultLocale,
   localePrefix: 'as-needed',
+  localeDetection: false, // Always use Kurdish as default, ignore browser language
 });
 
 export function proxy(request: NextRequest) {
