@@ -12,9 +12,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useLocale } from 'next-intl';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const locale = useLocale();
 
   return (
     <>
@@ -46,21 +48,28 @@ export default function Navbar() {
 
       {/* Modal */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="w-[80vw]  max-w-sm md:max-w-md max-h-[85vh] overflow-y-auto p-3 md:p-4">
-        
+        <DialogContent 
+          className="w-[80vw]  max-w-sm md:max-w-md max-h-[85vh] overflow-y-auto p-3 md:p-4"
+          dir={locale === 'en' ? 'ltr' : 'rtl'}
+        >
+          <DialogTitle className="sr-only">
+            {locale === 'en' ? 'Location Details' : locale === 'ar' ? 'تفاصيل الموقع' : 'تفصيلاتی ناونیشان'}
+          </DialogTitle>
 
-          {/* Logo & Name */}
-          <div className="flex flex-col items-center gap-2 mb-3">
-            <div className="relative h-20 w-20 md:h-20 md:w-20">
-              <Image
-                src="/image/logo.jpg"
-                alt="Logo"
-                fill
-                className="object-contain"
-              />
+            {/* Logo & Name */}
+            <div className="flex flex-col items-center gap-2 mb-3">
+              <div className="relative h-20 w-20 md:h-20 md:w-20">
+                <Image
+                  src="/image/logo.jpg"
+                  alt="Logo"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <span className="font-bold text-lg md:text-xl text-[#386641] mt-1">
+                {locale === 'en' ? 'Miwani Mawlawi' : locale === 'ar' ? 'ميواني مولاوي' : 'میوانی مەولەوی'}
+              </span>
             </div>
-            <span className="font-bold text-lg md:text-xl text-[#386641] mt-1">میوانی مەولەوی</span>
-          </div>
 
           {/* Content */}
           <div className="bg-white rounded-lg p-3 space-y-3">
@@ -68,7 +77,9 @@ export default function Navbar() {
             <div className="bg-pink-50 rounded-lg px-2 py-2 border border-pink-200">
               
               <div className="flex items-center gap-2 mb-2">
-             <p className='font-bold text-xs'>سۆشیاڵ میدیاکانمان:</p>
+                <p className='font-bold text-xs'>
+                  {locale === 'en' ? 'Our Social Media:' : locale === 'ar' ? 'وسائط التواصل الاجتماعي:' : 'سۆشیاڵ میدیاکانمان:'}
+                </p>
                
               </div>
 
@@ -145,12 +156,13 @@ export default function Navbar() {
                   <Phone size={14} className="text-white" />
                 </div>
                 <p className="text-xs font-bold text-blue-900 uppercase tracking-wide">
-                  ژمارە تەلەفۆن
+                  {locale === 'en' ? 'Phone Number' : locale === 'ar' ? 'رقم الهاتف' : 'ژمارە تەلەفۆن'}
                 </p>
               </div>
               <button
                 onClick={() => window.location.href = 'tel:+964123456789'}
                 className="text-sm font-bold text-blue-900 hover:text-blue-600 transition break-all text-left hover:underline"
+                dir={locale === 'en' ? 'ltr' : 'rtl'}
               >
                07719776307
               </button>
@@ -164,11 +176,11 @@ export default function Navbar() {
                   <Clock size={14} className="text-white" />
                 </div>
                 <p className="text-xs font-bold text-amber-900 uppercase tracking-wide">
-ڕۆژانە                   کراوەیە
-لە                </p>
+                  {locale === 'en' ? 'Open Hours' : locale === 'ar' ? 'ساعات العمل' : 'کراوەیە لە ڕۆژانە'}
+                </p>
               </div>
-              <p className="text-sm font-bold text-amber-900">
-               06:00 بەیانی  - 09:00 شەو
+              <p className="text-sm font-bold text-amber-900" dir={locale === 'en' ? 'ltr' : 'rtl'}>
+                {locale === 'en' ? '09:00 AM - 06:00 PM' : locale === 'ar' ? '09:00 صباحاً - 06:00 مساءً' : '06:00 بەیانی  - 09:00 شەو'}
               </p>
               
             </div>
@@ -180,11 +192,11 @@ export default function Navbar() {
                   <MapPin size={14} className="text-white" />
                 </div>
                 <p className="text-xs font-bold text-purple-900 uppercase tracking-wide">
-                  ناونیشان
+                  {locale === 'en' ? 'Location' : locale === 'ar' ? 'الموقع' : 'ناونیشان'}
                 </p>
               </div>
-              <p className="text-[10px] text-purple-900 font-semibold leading-snug">
-                  سلێمانی - جادەی مەولەوی
+              <p className="text-[10px] text-purple-900 font-semibold leading-snug" dir={locale === 'en' ? 'ltr' : 'rtl'}>
+                {locale === 'en' ? 'Sulaymaniyah - Mawlawi Street' : locale === 'ar' ? 'السليمانية - شارع الملاوي' : 'سلێمانی - جادەی مەولەوی'}
               </p>
             </div>
 
@@ -193,7 +205,7 @@ export default function Navbar() {
               onClick={() => setIsOpen(false)}
               className="w-full mt-3 bg-[#386641] hover:bg-[#2a4d30] text-white rounded-lg py-2 md:py-3 font-semibold text-sm"
             >
-              داخستن
+              {locale === 'en' ? 'Close' : locale === 'ar' ? 'إغلاق' : 'داخستن'}
             </Button>
 
            

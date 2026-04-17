@@ -67,8 +67,10 @@ export default function MenuGrid({ items }: MenuGridProps) {
             setQuantity(1);
           }}
         >
-          <DialogContent className="max-h-[85vh] overflow-y-auto max-w-xs md:max-w-sm">
-            
+          <DialogContent className="max-h-[85vh] overflow-y-auto max-w-xs md:max-w-sm" dir="ltr">
+            <DialogTitle className="sr-only">
+              {getDisplayName(selectedItem)}
+            </DialogTitle>
 
             {/* Detail Image with optimization */}
             <div className="rounded-lg overflow-hidden mb-4 -mt-6 -mx-6 bg-gray-100">
@@ -89,12 +91,34 @@ export default function MenuGrid({ items }: MenuGridProps) {
 
             {/* Title and Price */}
             <div className="mb-6 flex items-center justify-between gap-2">
-              <h2 className="text-lg md:text-xl font-bold text-gray-900 flex-1">
-                {getDisplayName(selectedItem)}
-              </h2>
-              <p className="text-lg md:text-xl font-bold text-[#386641] whitespace-nowrap">
-                {formatPrice(selectedItem.price * quantity)} {locale === 'en' ? 'IQD' : 'دینار'}
-              </p>
+              {locale === 'ar' ? (
+                <>
+                  <p className="text-lg md:text-xl font-bold text-[#386641] whitespace-nowrap" dir="ltr">
+                    <span dir="ltr">دینار</span> <span dir="ltr">{formatPrice(selectedItem.price * quantity)}</span>
+                  </p>
+                  <h2 className="text-lg md:text-xl font-bold text-gray-900 flex-1 text-right">
+                    {getDisplayName(selectedItem)}
+                  </h2>
+                </>
+              ) : locale === 'ku' ? (
+                <>
+                  <p className="text-lg md:text-xl font-bold text-[#386641] whitespace-nowrap" dir="ltr">
+                    <span dir="ltr">دینار</span> <span dir="ltr">{formatPrice(selectedItem.price * quantity)}</span>
+                  </p>
+                  <h2 className="text-lg md:text-xl font-bold text-gray-900 flex-1">
+                    {getDisplayName(selectedItem)}
+                  </h2>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-lg md:text-xl font-bold text-gray-900 flex-1">
+                    {getDisplayName(selectedItem)}
+                  </h2>
+                  <p className="text-lg md:text-xl font-bold text-[#386641] whitespace-nowrap">
+                    {formatPrice(selectedItem.price * quantity)} IQD
+                  </p>
+                </>
+              )}
             </div>
 
             {/* Quantity Selector */}

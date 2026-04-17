@@ -61,6 +61,15 @@ export default async function Home({
       </ImageKitWrapper>
       <ScrollButtons />
       <Celebration />
+      <footer className="py-4 md:py-6 text-gray-600 text-xs md:text-sm px-2 md:px-4" dir="ltr">
+        <div className="flex flex-wrap items-center justify-center gap-1 md:gap-2">
+          <span className='font-bold'>Designed and developed by</span>
+          <a  href="https://www.facebook.com/share/1HwugSQwyQ/" className="inline-flex items-center gap-1 font-bold" >  
+            <span className="text-[#386641] underline">Hama sha</span>
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
+
