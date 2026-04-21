@@ -7,8 +7,8 @@ export async function POST(request: NextRequest) {
     console.log('🔐 Login attempt with username:', username);
 
     // Simple username/password check
-    const adminUsername = 'hama123';
-    const adminPassword = 'hama123';
+    const adminUsername = 'hama1';
+    const adminPassword = 'hama1';
 
     if (username === adminUsername && password === adminPassword) {
       console.log('✅ Credentials valid');
@@ -18,12 +18,12 @@ export async function POST(request: NextRequest) {
         { status: 200 }
       );
 
-      // Set secure cookie for authentication
+      
       response.cookies.set('adminAuth', 'true', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7 days
+        maxAge: 60 * 60 * 24 * 7, 
         path: '/',
       });
 
