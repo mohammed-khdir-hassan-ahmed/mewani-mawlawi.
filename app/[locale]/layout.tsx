@@ -7,8 +7,8 @@ import { locales } from '@/i18n/request';
 import LocaleSetup from './LocaleSetup';
 
 export const metadata: Metadata = {
-  title: "miwani-mawlawi",
-  description: "miwani-mawlawi",
+  title: "Sha-caffe",
+  description: "Sha -caffe",
 };
 
 export function generateStaticParams() {

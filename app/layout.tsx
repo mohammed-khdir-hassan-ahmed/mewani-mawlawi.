@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "miwani-mawlawi",
-  description: "miwani-mawlawi",
+  title: "Sha-caffe",
+  description: "Sha-caffe",
 };
 
 export default function RootLayout({

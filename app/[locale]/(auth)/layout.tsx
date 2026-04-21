@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import Loading from "../loading";
 
 export const metadata: Metadata = {
-  title: "Login - miwani-mawlawi",
+  title: "Login - Sha-caffe",
   description: "Admin login",
 };
 
