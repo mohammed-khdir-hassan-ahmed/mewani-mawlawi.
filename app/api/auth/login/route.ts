@@ -6,13 +6,13 @@ export async function POST(request: NextRequest) {
 
     console.log('🔐 Login attempt with username:', username);
 
-    // Simple username/password check
+    
     const adminUsername = 'hama1';
     const adminPassword = 'hama1';
 
     if (username === adminUsername && password === adminPassword) {
       console.log('✅ Credentials valid');
-      // Create response with proper redirect
+    
       const response = NextResponse.json(
         { success: true, message: 'Login successful' },
         { status: 200 }
