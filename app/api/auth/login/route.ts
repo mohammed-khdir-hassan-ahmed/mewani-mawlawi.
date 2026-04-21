@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('❌ Login API error:', error);
     return NextResponse.json(
-      { success: false, message: 'خۆڵای سێرڤەر: ' + (error instanceof Error ? error.message : String(error)) },
+      { success: false, message: ' سێرڤەر: ' + (error instanceof Error ? error.message : String(error)) },
       { status: 500 }
     );
   }
