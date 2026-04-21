@@ -67,7 +67,7 @@ export default function Navbar() {
                 />
               </div>
               <span className="font-bold text-lg md:text-xl text-[#386641] mt-1">
-                {locale === 'en' ? 'Miwani Mawlawi' : locale === 'ar' ? 'ميواني مولاوي' : 'میوانی مەولەوی'}
+                {locale === 'en' ? 'SHA Cafe' : locale === 'ar' ? 'شا كافيه' : 'شا کافێ'}
               </span>
             </div>
 

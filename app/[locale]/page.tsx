@@ -25,7 +25,7 @@ async function MenuList({ locale }: { locale: string }) {
     return (
       <div className="mt-3">
         <h1 className="text-3xl md:text-4xl font-bold text-[#386641] text-center mt-6 md:mt-0">
-          {locale === 'en' ? 'Miwani Mawlawi' : 'میوانی مەولەوی'}
+          {locale === 'en' ? 'Sha Caffe ' : ' شا کافێ '}
         </h1>
         <MenuSearch items={items} />
       </div>
